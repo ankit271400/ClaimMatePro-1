@@ -1,0 +1,189 @@
+Alright — here’s the **full ClaimMate build plan** with the **advanced graphics & theme layer** included so your app doesn’t just *work*, but *looks premium* for the competition.
+
+---
+
+## **1. Overall Build Plan**
+
+We’ll combine **core ClaimMate MVP** + **modern UI/UX & theme system**.
+
+---
+
+### **Step 1 – Core App Features**
+
+(From the MVP plan we discussed earlier)
+
+1. User Auth (JWT or OAuth)
+2. Policy Upload (PDF/Image)
+3. OCR → Text Parsing
+4. NLP Risk Analysis & Plain Language Summary
+5. Risk Score Badge & Flagged Clauses
+6. Claim Prep Checklist
+7. Claim Tracker
+8. Advisor Escalation Chat
+
+---
+
+### **Step 2 – Advanced Theme Implementation**
+
+We’ll make ClaimMate look **professional + trustworthy** using:
+
+* **Design System:** Custom Tailwind theme with global color tokens.
+* **UI Library:** shadcn/ui + Heroicons for consistency.
+* **Animations:** Framer Motion for smooth transitions.
+* **Illustrations:** unDraw / Humaaans (customized to brand colors).
+* **Charts:** ApexCharts for interactive risk score visualization.
+* **Dark Mode Support:** Tailwind dark mode class-based.
+
+---
+
+#### **Theme Tokens (Tailwind config)**
+
+```js
+theme: {
+  extend: {
+    colors: {
+      primary: '#0f766e',     // Deep Teal - trust
+      secondary: '#fb923c',   // Warm Orange - CTA
+      bgLight: '#f8fafc',     // Neutral background
+      danger: '#ef4444',      // Muted red - warnings
+      success: '#10b981',     // Green - approvals
+    },
+    fontFamily: {
+      heading: ['Poppins', 'sans-serif'],
+      body: ['Inter', 'sans-serif'],
+    }
+  }
+}
+```
+
+---
+
+#### **Brand Feel**
+
+* **Tone:** Friendly, clear, non-intimidating.
+* **Style:** Flat + minimal with subtle shadows & micro-interactions.
+* **Layout:** Spacious white space with cards & section dividers.
+* **Animation:** Fade-ins, slide-ins for results.
+
+---
+
+### **Step 3 – Advanced UI Components**
+
+#### **Landing Page**
+
+* Hero section with animated illustration of “Policy Scan” (Lottie animation).
+* Big CTA button: “Upload My Policy →”.
+* Trust badges: “Secure · Private · 100% Transparent”.
+
+#### **Upload Page**
+
+* Drag-and-drop zone with animated border glow on hover.
+* Progress bar while uploading + OCR animation.
+
+#### **Analysis Page**
+
+* **Risk Score Gauge** (ApexCharts radial bar, green → red).
+* **Flagged Clauses List**:
+
+  * Each clause in a card with:
+
+    * Icon (info/warning/danger)
+    * Color-coded severity
+    * Plain language summary
+  * Expand for raw text.
+
+#### **Claim Prep Checklist**
+
+* Steps shown in vertical timeline with icons.
+* Upload slots for each required document.
+* Framer Motion animations on checklist completion.
+
+#### **Claim Tracker**
+
+* Horizontal progress tracker with status nodes.
+* Estimated time remaining counter.
+
+---
+
+### **Step 4 – Frontend Build with Graphics**
+
+**Stack:**
+
+* Next.js (SSR)
+* Tailwind CSS + shadcn/ui
+* Framer Motion
+* ApexCharts
+* React Query (data)
+* Lottie for animations
+
+**Implementation order:**
+
+1. Setup Tailwind theme + typography.
+2. Create reusable components:
+
+   * `RiskScoreCard`
+   * `ClauseCard`
+   * `UploadBox`
+   * `ProgressTimeline`
+3. Integrate Framer Motion animations (page transitions, list animations).
+4. Embed SVG illustrations from unDraw with brand colors.
+5. Add ApexCharts gauge for score.
+
+---
+
+### **Step 5 – Backend & AI**
+
+(Same as before, just keep output JSON clean for frontend styling)
+
+* OCR via Tesseract/AWS Textract.
+* NLP risk tagging.
+* Summarization.
+* Risk score calculation.
+* Return JSON with `{ score, color, flagged_clauses[] }`.
+
+---
+
+### **Step 6 – Graphics & Animation Sources**
+
+* **Illustrations:** [undraw.co](https://undraw.co) / [Humaaans](https://www.humaaans.com/) (edit colors to match theme).
+* **Icons:** Heroicons (outline) + Lucide React.
+* **Lottie animations:** [LottieFiles](https://lottiefiles.com/) – search for “upload”, “document scan”, “success”.
+* **Charts:** ApexCharts (radial bar + timeline chart).
+* **Brand mockups:** Figma for consistent screens.
+
+---
+
+### **Step 7 – Deployment**
+
+* **Frontend:** Vercel
+* **Backend:** Railway / AWS
+* **Storage:** AWS S3
+* **DB:** AWS RDS PostgreSQL
+
+---
+
+### **Step 8 – Development Timeline**
+
+| Week | Task                  |
+| ---- | --------------------- |
+| 1    | Theme, UI Kit, Auth   |
+| 2    | Upload + OCR Backend  |
+| 3    | NLP + Risk Engine     |
+| 4    | Analysis Page + Chart |
+| 5    | Claim Prep + Tracker  |
+| 6    | Advisor Chat + Polish |
+
+---
+
+I can **now create a full UI wireframe pack** for ClaimMate with:
+
+* Landing Page
+* Upload Page
+* Analysis Page
+* Checklist
+* Tracker
+
+All styled with this theme so you just have to code it in Next.js + Tailwind.
+
+Do you want me to make that **Figma-ready wireframe set** for you next?
+That will give you a visual blueprint for the app’s final look.
