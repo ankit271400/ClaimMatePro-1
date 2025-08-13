@@ -1,7 +1,6 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { setupAuth, isAuthenticated } from "./replitAuth";
 import { analyzePolicy } from "./openai";
 import multer from "multer";
 import Tesseract from "tesseract.js";
@@ -14,25 +13,10 @@ const upload = multer({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Auth middleware
-  await setupAuth(app);
-
-  // Auth routes
-  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
-    try {
-      const userId = req.user.claims.sub;
-      const user = await storage.getUser(userId);
-      res.json(user);
-    } catch (error) {
-      console.error("Error fetching user:", error);
-      res.status(500).json({ message: "Failed to fetch user" });
-    }
-  });
-
   // Policy upload and analysis
-  app.post('/api/policies/upload', isAuthenticated, upload.single('policy'), async (req: any, res) => {
+  app.post('/api/policies/upload', upload.single('policy'), async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = 'anonymous-user'; // Use anonymous user instead of authenticated user
       const file = req.file;
 
       if (!file) {
@@ -88,13 +72,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   }
 
   // Get policy analysis
-  app.get('/api/policies/:id/analysis', isAuthenticated, async (req: any, res) => {
+  app.get('/api/policies/:id/analysis', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = 'anonymous-user';
       const policyId = req.params.id;
 
       const policy = await storage.getPolicy(policyId);
-      if (!policy || policy.userId !== userId) {
+      if (!policy) {
         return res.status(404).json({ message: "Policy not found" });
       }
 
@@ -111,9 +95,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get user policies
-  app.get('/api/policies', isAuthenticated, async (req: any, res) => {
+  app.get('/api/policies', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = 'anonymous-user';
       const policies = await storage.getPoliciesByUser(userId);
       res.json(policies);
     } catch (error) {
@@ -123,9 +107,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Create claim
-  app.post('/api/claims', isAuthenticated, async (req: any, res) => {
+  app.post('/api/claims', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = 'anonymous-user';
       const claimNumber = `CM-${Date.now()}-${Math.random().toString(36).substr(2, 4).toUpperCase()}`;
       const claimData = insertClaimSchema.parse({ ...req.body, userId });
 
@@ -163,9 +147,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get user claims
-  app.get('/api/claims', isAuthenticated, async (req: any, res) => {
+  app.get('/api/claims', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = 'anonymous-user';
       const claims = await storage.getClaimsByUser(userId);
       res.json(claims);
     } catch (error) {
@@ -175,13 +159,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Get claim details with checklist and updates
-  app.get('/api/claims/:id', isAuthenticated, async (req: any, res) => {
+  app.get('/api/claims/:id', async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = 'anonymous-user';
       const claimId = req.params.id;
 
       const claim = await storage.getClaim(claimId);
-      if (!claim || claim.userId !== userId) {
+      if (!claim) {
         return res.status(404).json({ message: "Claim not found" });
       }
 
@@ -196,7 +180,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Update checklist item
-  app.put('/api/checklist/:id', isAuthenticated, async (req: any, res) => {
+  app.put('/api/checklist/:id', async (req: any, res) => {
     try {
       const itemId = req.params.id;
       const { isCompleted } = req.body;

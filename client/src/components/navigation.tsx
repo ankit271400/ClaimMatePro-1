@@ -1,17 +1,11 @@
 import { Shield, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/hooks/useAuth";
 import { useState } from "react";
 import { useLocation } from "wouter";
 
 export default function Navigation() {
-  const { user, isAuthenticated } = useAuth();
   const [location, setLocation] = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  const handleSignOut = () => {
-    window.location.href = '/api/logout';
-  };
 
   const navigation = [
     { name: 'Dashboard', href: '/', current: location === '/' },
@@ -33,45 +27,20 @@ export default function Navigation() {
           
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            {isAuthenticated && (
-              <>
-                {navigation.map((item) => (
-                  <button
-                    key={item.name}
-                    onClick={() => setLocation(item.href)}
-                    className={`${
-                      item.current 
-                        ? 'text-primary border-b-2 border-primary' 
-                        : 'text-slate-600 hover:text-primary'
-                    } transition-colors pb-1`}
-                    data-testid={`nav-${item.name.toLowerCase()}`}
-                  >
-                    {item.name}
-                  </button>
-                ))}
-                
-                <div className="flex items-center space-x-4">
-                  {(user as any)?.profileImageUrl && (
-                    <img 
-                      src={(user as any).profileImageUrl} 
-                      alt="Profile" 
-                      className="w-8 h-8 rounded-full object-cover"
-                    />
-                  )}
-                  <span className="text-sm text-slate-600">
-                    {(user as any)?.firstName || (user as any)?.email}
-                  </span>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={handleSignOut}
-                    data-testid="button-sign-out"
-                  >
-                    Sign Out
-                  </Button>
-                </div>
-              </>
-            )}
+            {navigation.map((item) => (
+              <button
+                key={item.name}
+                onClick={() => setLocation(item.href)}
+                className={`${
+                  item.current 
+                    ? 'text-primary border-b-2 border-primary' 
+                    : 'text-slate-600 hover:text-primary'
+                } transition-colors pb-1`}
+                data-testid={`nav-${item.name.toLowerCase()}`}
+              >
+                {item.name}
+              </button>
+            ))}
           </div>
 
           {/* Mobile menu button */}
@@ -92,7 +61,7 @@ export default function Navigation() {
         </div>
 
         {/* Mobile Navigation */}
-        {isMobileMenuOpen && isAuthenticated && (
+        {isMobileMenuOpen && (
           <div className="md:hidden pb-4 border-t border-slate-200 mt-4 pt-4">
             <div className="space-y-4">
               {navigation.map((item) => (
@@ -112,30 +81,6 @@ export default function Navigation() {
                   {item.name}
                 </button>
               ))}
-              
-              <div className="border-t border-slate-200 pt-4 mt-4">
-                <div className="flex items-center space-x-3 px-4 py-2">
-                  {(user as any)?.profileImageUrl && (
-                    <img 
-                      src={(user as any).profileImageUrl} 
-                      alt="Profile" 
-                      className="w-8 h-8 rounded-full object-cover"
-                    />
-                  )}
-                  <span className="text-sm text-slate-600">
-                    {(user as any)?.firstName || (user as any)?.email}
-                  </span>
-                </div>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={handleSignOut}
-                  className="w-full mt-2"
-                  data-testid="mobile-button-sign-out"
-                >
-                  Sign Out
-                </Button>
-              </div>
             </div>
           </div>
         )}
