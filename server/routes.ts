@@ -18,6 +18,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = 'anonymous-user'; // Use anonymous user instead of authenticated user
       const file = req.file;
+      const ipfsHash = req.body.ipfsHash; // IPFS hash from Pinata
+      const walletAddress = req.body.walletAddress; // Wallet address from MetaMask
 
       if (!file) {
         return res.status(400).json({ message: "No file uploaded" });
@@ -29,6 +31,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         fileName: file.originalname,
         fileSize: file.size,
         mimeType: file.mimetype,
+        ipfsHash: ipfsHash || undefined,
+        walletAddress: walletAddress || undefined,
       });
 
       // Start OCR processing

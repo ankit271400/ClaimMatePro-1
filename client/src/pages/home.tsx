@@ -1,15 +1,22 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { motion } from "framer-motion";
-import { Upload, FileText, TrendingUp, Clock, Plus } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Upload, FileText, TrendingUp, Clock, Plus, Wallet, Cloud } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Navigation from "@/components/navigation";
+import WalletConnect from "@/components/wallet-connect";
+import PinataSetup from "@/components/pinata-setup";
 import { useLocation } from "wouter";
+import { useWallet } from "@/hooks/useWallet";
 import type { Policy, Claim } from "@shared/schema";
 
 export default function Home() {
   const [, setLocation] = useLocation();
+  const [showWalletSetup, setShowWalletSetup] = useState(true);
+  const [showPinataSetup, setShowPinataSetup] = useState(false);
+  const { isConnected } = useWallet();
 
   const { data: policies, isLoading: policiesLoading } = useQuery<Policy[]>({
     queryKey: ["/api/policies"],
@@ -39,11 +46,119 @@ export default function Home() {
     }
   };
 
+  const handleWalletConnected = () => {
+    setShowWalletSetup(false);
+    setShowPinataSetup(true);
+  };
+
+  const handlePinataSetup = () => {
+    setShowPinataSetup(false);
+  };
+
+  // Show wallet setup if not connected
+  if (showWalletSetup && !isConnected) {
+    return (
+      <div className="min-h-screen bg-bg-light">
+        <Navigation />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center mb-12"
+          >
+            <h1 className="text-4xl font-heading font-bold text-slate-900 mb-4">
+              Welcome to ClaimMate Dashboard
+            </h1>
+            <p className="text-xl text-slate-600 mb-8">
+              Connect your MetaMask wallet to access secure document storage and claim management
+            </p>
+          </motion.div>
+          
+          <div className="flex justify-center">
+            <WalletConnect onConnected={handleWalletConnected} showDisconnect={false} />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Show Pinata setup after wallet connection
+  if (showPinataSetup && isConnected) {
+    return (
+      <div className="min-h-screen bg-bg-light">
+        <Navigation />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center mb-12"
+          >
+            <div className="flex items-center justify-center space-x-3 mb-4">
+              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                <Wallet className="w-4 h-4 text-green-600" />
+              </div>
+              <div className="text-2xl">→</div>
+              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                <Cloud className="w-4 h-4 text-blue-600" />
+              </div>
+            </div>
+            <h1 className="text-4xl font-heading font-bold text-slate-900 mb-4">
+              Setup IPFS Storage
+            </h1>
+            <p className="text-xl text-slate-600 mb-8">
+              Configure Pinata to store your documents securely on the blockchain
+            </p>
+          </motion.div>
+          
+          <div className="flex justify-center">
+            <PinataSetup onSetupComplete={handlePinataSetup} />
+          </div>
+          
+          <div className="flex justify-center mt-6">
+            <Button
+              variant="outline"
+              onClick={handlePinataSetup}
+              data-testid="button-skip-pinata"
+            >
+              Skip for now
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-bg-light">
       <Navigation />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Wallet Status Banner */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-6"
+        >
+          <Card className="bg-gradient-to-r from-green-50 to-blue-50 border-green-200">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div className="flex items-center space-x-2">
+                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                    <span className="font-medium text-green-700">Wallet Connected</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                    <span className="font-medium text-blue-700">IPFS Ready</span>
+                  </div>
+                </div>
+                <Badge variant="secondary" className="bg-white">
+                  Blockchain Enabled
+                </Badge>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

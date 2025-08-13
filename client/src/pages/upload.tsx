@@ -1,13 +1,18 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Upload, CheckCircle, AlertCircle } from "lucide-react";
+import { Upload, CheckCircle, AlertCircle, Wallet, Cloud } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import Navigation from "@/components/navigation";
 import FileUpload from "@/components/file-upload";
+import WalletConnect from "@/components/wallet-connect";
 import { useToast } from "@/hooks/use-toast";
 import { useLocation } from "wouter";
+import { useWallet } from "@/hooks/useWallet";
+import { pinataService } from "@/services/pinata";
 import { apiRequest } from "@/lib/queryClient";
 
 export default function UploadPage() {
@@ -16,11 +21,38 @@ export default function UploadPage() {
   const queryClient = useQueryClient();
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
+  const [ipfsHash, setIpfsHash] = useState<string | null>(null);
+  const { isConnected, account } = useWallet();
 
   const uploadMutation = useMutation({
     mutationFn: async (file: File) => {
+      let pinataHash = null;
+      
+      // First upload to IPFS via Pinata if credentials are available
+      try {
+        const ipfsResult = await pinataService.uploadFile(file, {
+          name: `${account}_${file.name}`,
+          description: `Insurance policy document uploaded by ${account}`,
+        });
+        pinataHash = ipfsResult.hash;
+        setIpfsHash(pinataHash);
+        
+        toast({
+          title: "IPFS Upload Successful",
+          description: "Document stored securely on blockchain",
+        });
+      } catch (error) {
+        console.warn("IPFS upload failed, continuing with regular upload:", error);
+      }
+
       const formData = new FormData();
       formData.append('policy', file);
+      if (pinataHash) {
+        formData.append('ipfsHash', pinataHash);
+      }
+      if (account) {
+        formData.append('walletAddress', account);
+      }
       
       const response = await apiRequest('POST', '/api/policies/upload', formData);
       return response.json();
@@ -44,6 +76,7 @@ export default function UploadPage() {
       });
       setIsUploading(false);
       setUploadProgress(0);
+      setIpfsHash(null);
     },
   });
 
@@ -65,9 +98,59 @@ export default function UploadPage() {
     uploadMutation.mutate(file);
   };
 
+  // Show wallet connection if not connected
+  if (!isConnected) {
+    return (
+      <div className="min-h-screen bg-bg-light">
+        <Navigation />
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center mb-12"
+          >
+            <h1 className="text-4xl font-heading font-bold text-slate-900 mb-4">
+              Upload Policy Document
+            </h1>
+            <p className="text-xl text-slate-600 mb-8">
+              Connect your wallet to securely upload and store your insurance policy documents
+            </p>
+          </motion.div>
+          
+          <div className="flex justify-center">
+            <WalletConnect onConnected={() => {}} showDisconnect={false} />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-bg-light">
       <Navigation />
+      
+      {/* Wallet Status Banner */}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+        <Card className="bg-gradient-to-r from-green-50 to-blue-50 border-green-200 mb-6">
+          <CardContent className="p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                  <span className="font-medium text-green-700">Wallet Connected</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                  <span className="font-medium text-blue-700">IPFS Storage Ready</span>
+                </div>
+              </div>
+              <Badge variant="secondary" className="bg-white">
+                Blockchain Enabled
+              </Badge>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
       
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <motion.div
@@ -135,6 +218,17 @@ export default function UploadPage() {
               <p className="text-slate-600 mb-6">
                 Your policy is being analyzed. You'll be redirected to view the results shortly.
               </p>
+              {ipfsHash && (
+                <div className="mt-4 mb-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                  <div className="flex items-center justify-center space-x-2 text-sm text-blue-700">
+                    <Cloud className="w-4 h-4" />
+                    <span>Document stored on IPFS</span>
+                  </div>
+                  <p className="text-xs text-blue-600 mt-2 font-mono bg-white px-2 py-1 rounded">
+                    Hash: {ipfsHash.substring(0, 16)}...{ipfsHash.substring(ipfsHash.length - 8)}
+                  </p>
+                </div>
+              )}
               <div className="flex justify-center space-x-4">
                 <Button 
                   variant="outline"

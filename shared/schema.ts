@@ -44,6 +44,8 @@ export const policies = pgTable("policies", {
   uploadedAt: timestamp("uploaded_at").defaultNow(),
   extractedText: text("extracted_text"),
   analysisStatus: varchar("analysis_status").default("pending"), // pending, processing, completed, failed
+  ipfsHash: varchar("ipfs_hash"), // IPFS hash for blockchain storage
+  walletAddress: varchar("wallet_address"), // MetaMask wallet address
   createdAt: timestamp("created_at").defaultNow(),
 });
 
