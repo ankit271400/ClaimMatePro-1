@@ -14,8 +14,7 @@ import { z } from "zod";
 import Navigation from "@/components/navigation";
 import ChecklistTimeline from "@/components/checklist-timeline";
 import { useToast } from "@/hooks/use-toast";
-import { useWallet } from "@/hooks/useWallet";
-import WalletConnect from "@/components/wallet-connect";
+
 import { apiRequest } from "@/lib/queryClient";
 import type { Policy, Claim, ChecklistItem } from "@shared/schema";
 
@@ -38,7 +37,7 @@ export default function ClaimPrepPage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [showClaimForm, setShowClaimForm] = useState(!id);
-  const { isConnected } = useWallet();
+
 
   // Get policy ID from URL params or query string
   const searchParams = new URLSearchParams(window.location.search);
@@ -79,32 +78,7 @@ export default function ClaimPrepPage() {
     },
   });
 
-  // Show wallet connection if not connected
-  if (!isConnected) {
-    return (
-      <div className="min-h-screen bg-bg-light">
-        <Navigation />
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-12"
-          >
-            <h1 className="text-4xl font-heading font-bold text-slate-900 mb-4">
-              Claim Preparation
-            </h1>
-            <p className="text-xl text-slate-600 mb-8">
-              Connect your wallet to access secure claim preparation and management
-            </p>
-          </motion.div>
-          
-          <div className="flex justify-center">
-            <WalletConnect onConnected={() => {}} showDisconnect={false} />
-          </div>
-        </div>
-      </div>
-    );
-  }
+
 
   const form = useForm<ClaimFormData>({
     resolver: zodResolver(claimSchema),

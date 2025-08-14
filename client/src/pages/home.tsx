@@ -1,4 +1,4 @@
-import { useState } from "react";
+
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { Upload, FileText, TrendingUp, Clock, Plus, Wallet, Cloud, Shield, MessageCircle } from "lucide-react";
@@ -6,17 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Navigation from "@/components/navigation";
-import WalletConnect from "@/components/wallet-connect";
-import PinataSetup from "@/components/pinata-setup";
 import { useLocation } from "wouter";
-import { useWallet } from "@/hooks/useWallet";
 import type { Policy, Claim } from "@shared/schema";
 
 export default function Home() {
   const [, setLocation] = useLocation();
-  const [showWalletSetup, setShowWalletSetup] = useState(true);
-  const [showPinataSetup, setShowPinataSetup] = useState(false);
-  const { isConnected } = useWallet();
 
   const { data: policies, isLoading: policiesLoading } = useQuery<Policy[]>({
     queryKey: ["/api/policies"],
@@ -46,87 +40,7 @@ export default function Home() {
     }
   };
 
-  const handleWalletConnected = () => {
-    setShowWalletSetup(false);
-    setShowPinataSetup(true);
-  };
 
-  const handlePinataSetup = () => {
-    setShowPinataSetup(false);
-  };
-
-  // Show wallet setup if not connected
-  if (showWalletSetup && !isConnected) {
-    return (
-      <div className="min-h-screen bg-bg-light">
-        <Navigation />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-12"
-          >
-            <h1 className="text-4xl font-heading font-bold text-slate-900 mb-4">
-              Welcome to ClaimMate Dashboard
-            </h1>
-            <p className="text-xl text-slate-600 mb-8">
-              Connect your MetaMask wallet to access secure document storage and claim management
-            </p>
-          </motion.div>
-          
-          <div className="flex justify-center">
-            <WalletConnect onConnected={handleWalletConnected} showDisconnect={false} />
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Show Pinata setup after wallet connection
-  if (showPinataSetup && isConnected) {
-    return (
-      <div className="min-h-screen bg-bg-light">
-        <Navigation />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-12"
-          >
-            <div className="flex items-center justify-center space-x-3 mb-4">
-              <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
-                <Wallet className="w-4 h-4 text-green-600" />
-              </div>
-              <div className="text-2xl">→</div>
-              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                <Cloud className="w-4 h-4 text-blue-600" />
-              </div>
-            </div>
-            <h1 className="text-4xl font-heading font-bold text-slate-900 mb-4">
-              Setup IPFS Storage
-            </h1>
-            <p className="text-xl text-slate-600 mb-8">
-              Configure Pinata to store your documents securely on the blockchain
-            </p>
-          </motion.div>
-          
-          <div className="flex justify-center">
-            <PinataSetup onSetupComplete={handlePinataSetup} />
-          </div>
-          
-          <div className="flex justify-center mt-6">
-            <Button
-              variant="outline"
-              onClick={handlePinataSetup}
-              data-testid="button-skip-pinata"
-            >
-              Skip for now
-            </Button>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-bg-light">
@@ -335,14 +249,14 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Advanced Security Section */}
+          {/* Blockchain Features Section */}
           <div className="mb-16">
             <div className="flex items-center justify-between mb-6">
               <div>
-                <h2 className="text-2xl font-heading font-bold text-slate-900">Bank-Level Security</h2>
-                <p className="text-slate-600">Your data stays private with blockchain protection</p>
+                <h2 className="text-2xl font-heading font-bold text-slate-900">Blockchain Features</h2>
+                <p className="text-slate-600">Optional advanced security for power users</p>
               </div>
-              <Badge className="bg-orange-100 text-orange-700 px-3 py-1">Zero Trust</Badge>
+              <Badge className="bg-orange-100 text-orange-700 px-3 py-1">Optional</Badge>
             </div>
             <div className="grid md:grid-cols-3 gap-6">
               <Card className="bg-gradient-to-br from-orange-50 to-red-50 border-orange-200 hover:shadow-lg transition-all">
@@ -353,8 +267,8 @@ export default function Home() {
                   <h3 className="font-semibold text-slate-900 mb-2">Wallet Login</h3>
                   <p className="text-sm text-slate-600 mb-3">No passwords, no data breaches</p>
                   <div className="flex items-center justify-center">
-                    <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                    <span className="text-xs text-green-600 font-medium">Connected</span>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full mr-2"></div>
+                    <span className="text-xs text-gray-600 font-medium">Available</span>
                   </div>
                 </CardContent>
               </Card>
@@ -364,11 +278,11 @@ export default function Home() {
                   <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-4">
                     <Cloud className="w-6 h-6 text-blue-600" />
                   </div>
-                  <h3 className="font-semibold text-slate-900 mb-2">Encrypted Storage</h3>
-                  <p className="text-sm text-slate-600 mb-3">Documents stored on IPFS network</p>
+                  <h3 className="font-semibold text-slate-900 mb-2">IPFS Storage</h3>
+                  <p className="text-sm text-slate-600 mb-3">Decentralized document storage</p>
                   <div className="flex items-center justify-center">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
-                    <span className="text-xs text-blue-600 font-medium">Active</span>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full mr-2"></div>
+                    <span className="text-xs text-gray-600 font-medium">Available</span>
                   </div>
                 </CardContent>
               </Card>
@@ -379,10 +293,10 @@ export default function Home() {
                     <Shield className="w-6 h-6 text-green-600" />
                   </div>
                   <h3 className="font-semibold text-slate-900 mb-2">Privacy First</h3>
-                  <p className="text-sm text-slate-600 mb-3">AI processing on your device</p>
+                  <p className="text-sm text-slate-600 mb-3">Local AI processing</p>
                   <div className="flex items-center justify-center">
                     <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                    <span className="text-xs text-green-600 font-medium">Protected</span>
+                    <span className="text-xs text-green-600 font-medium">Active</span>
                   </div>
                 </CardContent>
               </Card>

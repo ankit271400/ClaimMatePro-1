@@ -8,8 +8,7 @@ import Navigation from "@/components/navigation";
 import StatusTracker from "@/components/status-tracker";
 import { useLocation } from "wouter";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useWallet } from "@/hooks/useWallet";
-import WalletConnect from "@/components/wallet-connect";
+
 import type { Claim, ClaimUpdate } from "@shared/schema";
 
 interface ClaimDetailsResponse {
@@ -21,7 +20,7 @@ interface ClaimDetailsResponse {
 export default function ClaimTrackerPage() {
   const { id } = useParams();
   const [, setLocation] = useLocation();
-  const { isConnected } = useWallet();
+
 
   const { data, isLoading, error } = useQuery<ClaimDetailsResponse>({
     queryKey: [`/api/claims/${id}`],
