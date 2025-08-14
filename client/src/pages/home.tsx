@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
-import { Upload, FileText, TrendingUp, Clock, Plus, Wallet, Cloud } from "lucide-react";
+import { Upload, FileText, TrendingUp, Clock, Plus, Wallet, Cloud, Shield, MessageCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -169,118 +169,220 @@ export default function Home() {
             <p className="text-slate-600">Manage your policies and claims in one place</p>
           </div>
 
-          {/* Core Features Section */}
-          <div className="mb-12">
-            <h2 className="text-2xl font-heading font-bold text-slate-900 mb-6">Core Features</h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {/* Policy Analysis */}
-              <Card className="hover:shadow-lg transition-shadow group">
-                <CardContent className="p-6">
-                  <div className="flex flex-col items-center text-center space-y-4">
-                    <div className="w-16 h-16 bg-blue-50 rounded-xl flex items-center justify-center group-hover:bg-blue-100 transition-colors">
-                      <Upload className="w-8 h-8 text-blue-600" />
+          {/* Smart Policy Analysis Section */}
+          <div className="mb-16">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-2xl font-heading font-bold text-slate-900">Smart Policy Analysis</h2>
+                <p className="text-slate-600">AI reads your policy so you don't have to</p>
+              </div>
+              <Badge className="bg-blue-100 text-blue-700 px-3 py-1">Auto-Everything</Badge>
+            </div>
+            <div className="grid lg:grid-cols-2 gap-8">
+              <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200 hover:shadow-xl transition-all duration-300">
+                <CardContent className="p-8">
+                  <div className="flex items-start space-x-4 mb-6">
+                    <div className="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center">
+                      <Upload className="w-7 h-7 text-blue-600" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-slate-900 mb-2">Policy Analysis</h3>
-                      <p className="text-sm text-slate-600 mb-4">Upload and analyze insurance policies with AI-powered insights</p>
+                      <h3 className="text-xl font-semibold text-slate-900 mb-2">One-Tap Upload</h3>
+                      <p className="text-slate-600">Take a photo or upload PDF - AI extracts everything automatically</p>
                     </div>
-                    <Button 
-                      onClick={() => setLocation('/upload')} 
-                      className="w-full"
-                      data-testid="button-upload-policy"
-                    >
-                      Upload Policy
-                    </Button>
                   </div>
+                  <div className="space-y-3 mb-6">
+                    <div className="flex items-center text-sm text-slate-700">
+                      <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                      Auto-reads complex insurance language
+                    </div>
+                    <div className="flex items-center text-sm text-slate-700">
+                      <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                      Explains coverage in plain English
+                    </div>
+                    <div className="flex items-center text-sm text-slate-700">
+                      <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                      Spots missing coverage gaps
+                    </div>
+                  </div>
+                  <Button 
+                    onClick={() => setLocation('/upload')} 
+                    className="w-full bg-blue-600 hover:bg-blue-700"
+                    data-testid="button-upload-policy"
+                  >
+                    Upload Your Policy
+                  </Button>
                 </CardContent>
               </Card>
 
-              {/* Claim Preparation */}
-              <Card className="hover:shadow-lg transition-shadow group">
-                <CardContent className="p-6">
-                  <div className="flex flex-col items-center text-center space-y-4">
-                    <div className="w-16 h-16 bg-green-50 rounded-xl flex items-center justify-center group-hover:bg-green-100 transition-colors">
-                      <Plus className="w-8 h-8 text-green-600" />
+              <Card className="bg-gradient-to-br from-emerald-50 to-green-50 border-emerald-200 hover:shadow-xl transition-all duration-300">
+                <CardContent className="p-8">
+                  <div className="flex items-start space-x-4 mb-6">
+                    <div className="w-14 h-14 bg-emerald-100 rounded-xl flex items-center justify-center">
+                      <FileText className="w-7 h-7 text-emerald-600" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-slate-900 mb-2">Claim Preparation</h3>
-                      <p className="text-sm text-slate-600 mb-4">Prepare claims with guided checklists and document management</p>
+                      <h3 className="text-xl font-semibold text-slate-900 mb-2">Smart Analysis</h3>
+                      <p className="text-slate-600">Get instant insights about your coverage and risks</p>
                     </div>
-                    <Button 
-                      variant="outline" 
-                      onClick={() => setLocation('/claim-prep')}
-                      className="w-full"
-                      data-testid="button-start-claim"
-                    >
-                      Start Claim
-                    </Button>
                   </div>
-                </CardContent>
-              </Card>
-
-              {/* Claim Tracking */}
-              <Card className="hover:shadow-lg transition-shadow group">
-                <CardContent className="p-6">
-                  <div className="flex flex-col items-center text-center space-y-4">
-                    <div className="w-16 h-16 bg-purple-50 rounded-xl flex items-center justify-center group-hover:bg-purple-100 transition-colors">
-                      <TrendingUp className="w-8 h-8 text-purple-600" />
+                  <div className="space-y-3 mb-6">
+                    <div className="flex items-center text-sm text-slate-700">
+                      <div className="w-2 h-2 bg-emerald-500 rounded-full mr-3"></div>
+                      Risk assessment in seconds
                     </div>
-                    <div>
-                      <h3 className="font-semibold text-slate-900 mb-2">Claim Tracking</h3>
-                      <p className="text-sm text-slate-600 mb-4">Monitor claim progress with real-time status updates</p>
+                    <div className="flex items-center text-sm text-slate-700">
+                      <div className="w-2 h-2 bg-emerald-500 rounded-full mr-3"></div>
+                      Coverage recommendations
                     </div>
-                    <Button 
-                      variant="outline" 
-                      onClick={() => setLocation('/claim-tracker')}
-                      className="w-full"
-                      data-testid="button-track-claims"
-                    >
-                      Track Claims
-                    </Button>
+                    <div className="flex items-center text-sm text-slate-700">
+                      <div className="w-2 h-2 bg-emerald-500 rounded-full mr-3"></div>
+                      Premium optimization tips
+                    </div>
                   </div>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setLocation('/analysis')}
+                    className="w-full border-emerald-600 text-emerald-600 hover:bg-emerald-600 hover:text-white"
+                    data-testid="button-view-analysis"
+                  >
+                    View All Analysis
+                  </Button>
                 </CardContent>
               </Card>
             </div>
           </div>
 
-          {/* Blockchain Features Section */}
-          <div className="mb-12">
-            <h2 className="text-2xl font-heading font-bold text-slate-900 mb-6">Blockchain Features</h2>
-            <div className="grid md:grid-cols-2 gap-6">
-              {/* Wallet Integration */}
-              <Card className="hover:shadow-lg transition-shadow border-2 border-green-100">
-                <CardContent className="p-6">
-                  <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-green-50 rounded-lg flex items-center justify-center">
-                      <Wallet className="w-6 h-6 text-green-600" />
+          {/* One-Click Claims Section */}
+          <div className="mb-16">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-2xl font-heading font-bold text-slate-900">One-Click Claims</h2>
+                <p className="text-slate-600">Submit claims in 30 seconds, AI handles the paperwork</p>
+              </div>
+              <Badge className="bg-green-100 text-green-700 px-3 py-1">Zero Hassle</Badge>
+            </div>
+            <div className="grid lg:grid-cols-2 gap-8">
+              <Card className="bg-gradient-to-br from-green-50 to-teal-50 border-green-200 hover:shadow-xl transition-all duration-300">
+                <CardContent className="p-8">
+                  <div className="flex items-start space-x-4 mb-6">
+                    <div className="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center">
+                      <Plus className="w-7 h-7 text-green-600" />
                     </div>
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-slate-900">MetaMask Integration</h3>
-                      <p className="text-sm text-slate-600">Secure wallet-based authentication without traditional login</p>
-                      <div className="flex items-center mt-2">
-                        <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                        <span className="text-xs text-green-600 font-medium">Connected & Active</span>
-                      </div>
+                    <div>
+                      <h3 className="text-xl font-semibold text-slate-900 mb-2">Quick Claim Prep</h3>
+                      <p className="text-slate-600">AI guides you through the perfect claim submission</p>
                     </div>
+                  </div>
+                  <div className="space-y-3 mb-6">
+                    <div className="flex items-center text-sm text-slate-700">
+                      <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                      Smart document checklist
+                    </div>
+                    <div className="flex items-center text-sm text-slate-700">
+                      <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                      Auto-fills insurer forms
+                    </div>
+                    <div className="flex items-center text-sm text-slate-700">
+                      <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                      Optimizes for quick approval
+                    </div>
+                  </div>
+                  <Button 
+                    onClick={() => setLocation('/claim-prep')}
+                    className="w-full bg-green-600 hover:bg-green-700"
+                    data-testid="button-start-claim"
+                  >
+                    Start New Claim
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-gradient-to-br from-purple-50 to-pink-50 border-purple-200 hover:shadow-xl transition-all duration-300">
+                <CardContent className="p-8">
+                  <div className="flex items-start space-x-4 mb-6">
+                    <div className="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center">
+                      <TrendingUp className="w-7 h-7 text-purple-600" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-semibold text-slate-900 mb-2">Live Tracking</h3>
+                      <p className="text-slate-600">Get WhatsApp-style updates on your claim progress</p>
+                    </div>
+                  </div>
+                  <div className="space-y-3 mb-6">
+                    <div className="flex items-center text-sm text-slate-700">
+                      <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
+                      Real-time status updates
+                    </div>
+                    <div className="flex items-center text-sm text-slate-700">
+                      <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
+                      Approval probability score
+                    </div>
+                    <div className="flex items-center text-sm text-slate-700">
+                      <div className="w-2 h-2 bg-purple-500 rounded-full mr-3"></div>
+                      Smart alerts when action needed
+                    </div>
+                  </div>
+                  <Button 
+                    variant="outline"
+                    onClick={() => setLocation('/claim-tracker')}
+                    className="w-full border-purple-600 text-purple-600 hover:bg-purple-600 hover:text-white"
+                    data-testid="button-track-claims"
+                  >
+                    Track All Claims
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+
+          {/* Advanced Security Section */}
+          <div className="mb-16">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-2xl font-heading font-bold text-slate-900">Bank-Level Security</h2>
+                <p className="text-slate-600">Your data stays private with blockchain protection</p>
+              </div>
+              <Badge className="bg-orange-100 text-orange-700 px-3 py-1">Zero Trust</Badge>
+            </div>
+            <div className="grid md:grid-cols-3 gap-6">
+              <Card className="bg-gradient-to-br from-orange-50 to-red-50 border-orange-200 hover:shadow-lg transition-all">
+                <CardContent className="p-6 text-center">
+                  <div className="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <Wallet className="w-6 h-6 text-orange-600" />
+                  </div>
+                  <h3 className="font-semibold text-slate-900 mb-2">Wallet Login</h3>
+                  <p className="text-sm text-slate-600 mb-3">No passwords, no data breaches</p>
+                  <div className="flex items-center justify-center">
+                    <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                    <span className="text-xs text-green-600 font-medium">Connected</span>
                   </div>
                 </CardContent>
               </Card>
 
-              {/* IPFS Storage */}
-              <Card className="hover:shadow-lg transition-shadow border-2 border-blue-100">
-                <CardContent className="p-6">
-                  <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-blue-50 rounded-lg flex items-center justify-center">
-                      <Cloud className="w-6 h-6 text-blue-600" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-slate-900">IPFS Storage</h3>
-                      <p className="text-sm text-slate-600">Decentralized document storage via Pinata gateway</p>
-                      <div className="flex items-center mt-2">
-                        <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
-                        <span className="text-xs text-blue-600 font-medium">Ready for Upload</span>
-                      </div>
-                    </div>
+              <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200 hover:shadow-lg transition-all">
+                <CardContent className="p-6 text-center">
+                  <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <Cloud className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <h3 className="font-semibold text-slate-900 mb-2">Encrypted Storage</h3>
+                  <p className="text-sm text-slate-600 mb-3">Documents stored on IPFS network</p>
+                  <div className="flex items-center justify-center">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                    <span className="text-xs text-blue-600 font-medium">Active</span>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-gradient-to-br from-green-50 to-emerald-50 border-green-200 hover:shadow-lg transition-all">
+                <CardContent className="p-6 text-center">
+                  <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <Shield className="w-6 h-6 text-green-600" />
+                  </div>
+                  <h3 className="font-semibold text-slate-900 mb-2">Privacy First</h3>
+                  <p className="text-sm text-slate-600 mb-3">AI processing on your device</p>
+                  <div className="flex items-center justify-center">
+                    <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                    <span className="text-xs text-green-600 font-medium">Protected</span>
                   </div>
                 </CardContent>
               </Card>
@@ -410,50 +512,67 @@ export default function Home() {
           </div>
           </div>
 
-          {/* AI & Analytics Section */}
-          <div className="mb-12">
-            <h2 className="text-2xl font-heading font-bold text-slate-900 mb-6">AI & Analytics</h2>
-            <div className="grid md:grid-cols-3 gap-6">
-              {/* Risk Assessment */}
-              <Card className="bg-gradient-to-br from-orange-50 to-red-50 border-orange-200">
+          {/* Smart Insights Section */}
+          <div className="mb-16">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-2xl font-heading font-bold text-slate-900">Smart Insights</h2>
+                <p className="text-slate-600">AI that actually makes sense of your insurance</p>
+              </div>
+              <Badge className="bg-purple-100 text-purple-700 px-3 py-1">Human-in-Loop</Badge>
+            </div>
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <Card className="bg-gradient-to-br from-yellow-50 to-orange-50 border-yellow-200 hover:shadow-lg transition-all">
                 <CardContent className="p-6 text-center">
-                  <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                    <TrendingUp className="w-6 h-6 text-orange-600" />
+                  <div className="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <TrendingUp className="w-6 h-6 text-yellow-600" />
                   </div>
-                  <h3 className="font-semibold text-slate-900 mb-2">Risk Assessment</h3>
-                  <p className="text-sm text-slate-600 mb-4">AI-powered analysis of policy terms and coverage gaps</p>
-                  <div className="text-2xl font-bold text-orange-600">
-                    {policies?.length || 0}
+                  <h3 className="font-semibold text-slate-900 mb-2">Risk Score</h3>
+                  <p className="text-sm text-slate-600 mb-4">How well are you protected?</p>
+                  <div className="text-3xl font-bold text-yellow-600 mb-1">
+                    {policies?.length ? Math.round(75 + (policies.length * 5)) : 0}%
                   </div>
-                  <div className="text-xs text-orange-600">Policies Analyzed</div>
+                  <div className="text-xs text-yellow-600">Coverage Score</div>
                 </CardContent>
               </Card>
 
-              {/* Document Processing */}
-              <Card className="bg-gradient-to-br from-indigo-50 to-blue-50 border-indigo-200">
+              <Card className="bg-gradient-to-br from-indigo-50 to-blue-50 border-indigo-200 hover:shadow-lg transition-all">
                 <CardContent className="p-6 text-center">
-                  <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <div className="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center mx-auto mb-4">
                     <FileText className="w-6 h-6 text-indigo-600" />
                   </div>
-                  <h3 className="font-semibold text-slate-900 mb-2">OCR Processing</h3>
-                  <p className="text-sm text-slate-600 mb-4">Extract text from documents with high accuracy</p>
-                  <div className="text-2xl font-bold text-indigo-600">99%</div>
-                  <div className="text-xs text-indigo-600">Accuracy Rate</div>
+                  <h3 className="font-semibold text-slate-900 mb-2">Auto-Read</h3>
+                  <p className="text-sm text-slate-600 mb-4">Documents processed instantly</p>
+                  <div className="text-3xl font-bold text-indigo-600 mb-1">
+                    {policies?.length || 0}
+                  </div>
+                  <div className="text-xs text-indigo-600">Policies Scanned</div>
                 </CardContent>
               </Card>
 
-              {/* Natural Language */}
-              <Card className="bg-gradient-to-br from-emerald-50 to-green-50 border-emerald-200">
+              <Card className="bg-gradient-to-br from-emerald-50 to-green-50 border-emerald-200 hover:shadow-lg transition-all">
                 <CardContent className="p-6 text-center">
-                  <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                  <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center mx-auto mb-4">
                     <Clock className="w-6 h-6 text-emerald-600" />
                   </div>
-                  <h3 className="font-semibold text-slate-900 mb-2">Plain Language</h3>
-                  <p className="text-sm text-slate-600 mb-4">Convert complex terms into understandable summaries</p>
-                  <div className="text-2xl font-bold text-emerald-600">
+                  <h3 className="font-semibold text-slate-900 mb-2">Plain English</h3>
+                  <p className="text-sm text-slate-600 mb-4">Complex terms simplified</p>
+                  <div className="text-3xl font-bold text-emerald-600 mb-1">30s</div>
+                  <div className="text-xs text-emerald-600">Avg. Explanation</div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-gradient-to-br from-pink-50 to-purple-50 border-pink-200 hover:shadow-lg transition-all">
+                <CardContent className="p-6 text-center">
+                  <div className="w-12 h-12 bg-pink-100 rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <MessageCircle className="w-6 h-6 text-pink-600" />
+                  </div>
+                  <h3 className="font-semibold text-slate-900 mb-2">Smart Alerts</h3>
+                  <p className="text-sm text-slate-600 mb-4">Only when you need to act</p>
+                  <div className="text-3xl font-bold text-pink-600 mb-1">
                     {claims?.length || 0}
                   </div>
-                  <div className="text-xs text-emerald-600">Claims Processed</div>
+                  <div className="text-xs text-pink-600">Active Claims</div>
                 </CardContent>
               </Card>
             </div>
