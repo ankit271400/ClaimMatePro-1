@@ -9,8 +9,10 @@ export default function Navigation() {
 
   const navigation = [
     { name: 'Dashboard', href: '/', current: location === '/' },
-    { name: 'Upload', href: '/upload', current: location === '/upload' },
-    { name: 'Claims', href: '/claim-tracker', current: location.startsWith('/claim') },
+    { name: 'Upload Policy', href: '/upload', current: location === '/upload' },
+    { name: 'Analysis', href: '/analysis', current: location.startsWith('/analysis') },
+    { name: 'Claim Prep', href: '/claim-prep', current: location === '/claim-prep' },
+    { name: 'Claim Tracker', href: '/claim-tracker', current: location === '/claim-tracker' },
   ];
 
   return (

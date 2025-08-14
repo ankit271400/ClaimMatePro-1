@@ -7,6 +7,7 @@ import Landing from "@/pages/landing";
 import Home from "@/pages/home";
 import Upload from "@/pages/upload";
 import Analysis from "@/pages/analysis";
+import AnalysisOverview from "@/pages/analysis-overview";
 import ClaimPrep from "@/pages/claim-prep";
 import ClaimTracker from "@/pages/claim-tracker";
 import NotFound from "@/pages/not-found";
@@ -17,6 +18,7 @@ function Router() {
       <Route path="/" component={Landing} />
       <Route path="/dashboard" component={Home} />
       <Route path="/upload" component={Upload} />
+      <Route path="/analysis" component={AnalysisOverview} />
       <Route path="/analysis/:id" component={Analysis} />
       <Route path="/claim-prep/:id?" component={ClaimPrep} />
       <Route path="/claim-tracker/:id?" component={ClaimTracker} />
