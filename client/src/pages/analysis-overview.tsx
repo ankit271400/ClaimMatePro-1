@@ -26,32 +26,7 @@ export default function AnalysisOverviewPage() {
   const processingAnalyses = policies?.filter(p => p.analysisStatus === 'processing') || [];
   const pendingAnalyses = policies?.filter(p => p.analysisStatus === 'pending') || [];
 
-  // Show wallet connection if not connected
-  if (!isConnected) {
-    return (
-      <div className="min-h-screen bg-bg-light">
-        <Navigation />
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-12"
-          >
-            <h1 className="text-4xl font-heading font-bold text-slate-900 mb-4">
-              Policy Analysis Center
-            </h1>
-            <p className="text-xl text-slate-600 mb-8">
-              Connect your wallet to view AI-powered policy analysis and insights
-            </p>
-          </motion.div>
-          
-          <div className="flex justify-center">
-            <WalletConnect onConnected={() => {}} showDisconnect={false} />
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // Note: Authentication removed - all users can access analysis features
 
   return (
     <div className="min-h-screen bg-bg-light">

@@ -1,14 +1,8 @@
-import { useQuery } from "@tanstack/react-query";
-
 export function useAuth() {
-  const { data: user, isLoading } = useQuery({
-    queryKey: ["/api/auth/user"],
-    retry: false,
-  });
-
+  // Authentication removed - all users have access to features
   return {
-    user,
-    isLoading,
-    isAuthenticated: !!user,
+    user: { id: 'anonymous-user', name: 'Guest User' },
+    isLoading: false,
+    isAuthenticated: true, // Always authenticated for open access
   };
 }

@@ -31,8 +31,8 @@ export default function UploadPage() {
       // First upload to IPFS via Pinata if credentials are available
       try {
         const ipfsResult = await pinataService.uploadFile(file, {
-          name: `${account}_${file.name}`,
-          description: `Insurance policy document uploaded by ${account}`,
+          name: `user_${file.name}`,
+          description: `Insurance policy document uploaded`,
         });
         pinataHash = ipfsResult.hash;
         setIpfsHash(pinataHash);
@@ -50,9 +50,7 @@ export default function UploadPage() {
       if (pinataHash) {
         formData.append('ipfsHash', pinataHash);
       }
-      if (account) {
-        formData.append('walletAddress', account);
-      }
+      // Note: Wallet address optional since authentication is removed
       
       const response = await apiRequest('POST', '/api/policies/upload', formData);
       return response.json();
@@ -98,38 +96,13 @@ export default function UploadPage() {
     uploadMutation.mutate(file);
   };
 
-  // Show wallet connection if not connected
-  if (!isConnected) {
-    return (
-      <div className="min-h-screen bg-bg-light">
-        <Navigation />
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-12"
-          >
-            <h1 className="text-4xl font-heading font-bold text-slate-900 mb-4">
-              Upload Policy Document
-            </h1>
-            <p className="text-xl text-slate-600 mb-8">
-              Connect your wallet to securely upload and store your insurance policy documents
-            </p>
-          </motion.div>
-          
-          <div className="flex justify-center">
-            <WalletConnect onConnected={() => {}} showDisconnect={false} />
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // Note: Authentication removed - all users can access upload functionality
 
   return (
     <div className="min-h-screen bg-bg-light">
       <Navigation />
       
-      {/* Wallet Status Banner */}
+      {/* Service Status Banner */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
         <Card className="bg-gradient-to-r from-green-50 to-blue-50 border-green-200 mb-6">
           <CardContent className="p-4">
@@ -137,15 +110,15 @@ export default function UploadPage() {
               <div className="flex items-center space-x-3">
                 <div className="flex items-center space-x-2">
                   <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                  <span className="font-medium text-green-700">Wallet Connected</span>
+                  <span className="font-medium text-green-700">Upload Service Ready</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                  <span className="font-medium text-blue-700">IPFS Storage Ready</span>
+                  <span className="font-medium text-blue-700">AI Analysis Available</span>
                 </div>
               </div>
               <Badge variant="secondary" className="bg-white">
-                Blockchain Enabled
+                All Features Enabled
               </Badge>
             </div>
           </CardContent>
