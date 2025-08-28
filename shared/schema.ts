@@ -98,6 +98,27 @@ export const claimUpdates = pgTable("claim_updates", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Policy products for comparison (curated database of Indian insurance products)
+export const policyProducts = pgTable("policy_products", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  policyName: varchar("policy_name").notNull(),
+  insurer: varchar("insurer").notNull(),
+  category: varchar("category").notNull(), // health, life, motor, etc.
+  coverage: integer("coverage").notNull(), // coverage amount in lakhs
+  premium: integer("premium").notNull(), // annual premium in rupees
+  waitingPeriod: integer("waiting_period").default(0), // in years
+  copay: integer("copay").default(0), // copay percentage
+  claimSettlementRatio: integer("claim_settlement_ratio").notNull(), // percentage
+  exclusions: text("exclusions"),
+  keyFeatures: jsonb("key_features"), // array of key features
+  ageLimit: varchar("age_limit"), // e.g., "18-65 years"
+  familyFloater: boolean("family_floater").default(false),
+  preExistingDiseasesCovered: boolean("pre_existing_diseases_covered").default(false),
+  noClaimBonus: integer("no_claim_bonus").default(0), // percentage
+  roomRentCapping: varchar("room_rent_capping"), // e.g., "2% of sum insured"
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 export type UpsertUser = typeof users.$inferInsert;
 export type User = typeof users.$inferSelect;
 export type Policy = typeof policies.$inferSelect;
@@ -110,6 +131,8 @@ export type ChecklistItem = typeof checklistItems.$inferSelect;
 export type InsertChecklistItem = typeof checklistItems.$inferInsert;
 export type ClaimUpdate = typeof claimUpdates.$inferSelect;
 export type InsertClaimUpdate = typeof claimUpdates.$inferInsert;
+export type PolicyProduct = typeof policyProducts.$inferSelect;
+export type InsertPolicyProduct = typeof policyProducts.$inferInsert;
 
 export const insertPolicySchema = createInsertSchema(policies).omit({
   id: true,
@@ -131,4 +154,9 @@ export const insertClaimSchema = createInsertSchema(claims).omit({
 export const insertChecklistItemSchema = createInsertSchema(checklistItems).omit({
   id: true,
   completedAt: true,
+});
+
+export const insertPolicyProductSchema = createInsertSchema(policyProducts).omit({
+  id: true,
+  createdAt: true,
 });

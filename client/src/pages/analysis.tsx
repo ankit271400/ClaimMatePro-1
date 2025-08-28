@@ -1,7 +1,7 @@
 import { useParams } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { ArrowLeft, FileText, TrendingUp } from "lucide-react";
+import { ArrowLeft, FileText, TrendingUp, ArrowLeftRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Navigation from "@/components/navigation";
@@ -184,13 +184,23 @@ export default function AnalysisPage() {
               <h2 className="text-2xl font-heading font-bold text-slate-900">
                 Flagged Clauses ({flaggedClauses.length})
               </h2>
-              <Button 
-                onClick={() => setLocation(`/claim-prep?policyId=${policy.id}`)}
-                data-testid="button-start-claim-prep"
-              >
-                <TrendingUp className="w-4 h-4 mr-2" />
-                Start Claim Preparation
-              </Button>
+              <div className="flex space-x-3">
+                <Button 
+                  variant="outline"
+                  onClick={() => setLocation(`/compare/${policy.id}`)}
+                  data-testid="button-compare-policies"
+                >
+                  <ArrowLeftRight className="w-4 h-4 mr-2" />
+                  Compare Policies
+                </Button>
+                <Button 
+                  onClick={() => setLocation(`/claim-prep?policyId=${policy.id}`)}
+                  data-testid="button-start-claim-prep"
+                >
+                  <TrendingUp className="w-4 h-4 mr-2" />
+                  Start Claim Preparation
+                </Button>
+              </div>
             </div>
 
             {flaggedClauses.length > 0 ? (

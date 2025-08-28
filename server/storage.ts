@@ -5,6 +5,7 @@ import {
   claims,
   checklistItems,
   claimUpdates,
+  policyProducts,
   type User,
   type UpsertUser,
   type Policy,
@@ -17,6 +18,8 @@ import {
   type InsertChecklistItem,
   type ClaimUpdate,
   type InsertClaimUpdate,
+  type PolicyProduct,
+  type InsertPolicyProduct,
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 
@@ -50,6 +53,12 @@ export interface IStorage {
   // Claim updates operations
   createClaimUpdate(update: InsertClaimUpdate): Promise<ClaimUpdate>;
   getClaimUpdatesByClaim(claimId: string): Promise<ClaimUpdate[]>;
+  
+  // Policy product operations
+  createPolicyProduct(product: InsertPolicyProduct): Promise<PolicyProduct>;
+  getAllPolicyProducts(): Promise<PolicyProduct[]>;
+  getPolicyProductsByCategory(category: string): Promise<PolicyProduct[]>;
+  findSimilarPolicies(coverage: number, category: string): Promise<PolicyProduct[]>;
 }
 
 export class MemStorage implements IStorage {
@@ -59,6 +68,7 @@ export class MemStorage implements IStorage {
   private claims: Map<string, Claim>;
   private checklistItems: Map<string, ChecklistItem>;
   private claimUpdates: Map<string, ClaimUpdate>;
+  private policyProducts: Map<string, PolicyProduct>;
 
   constructor() {
     this.users = new Map();
@@ -67,6 +77,8 @@ export class MemStorage implements IStorage {
     this.claims = new Map();
     this.checklistItems = new Map();
     this.claimUpdates = new Map();
+    this.policyProducts = new Map();
+    this.seedPolicyProducts();
   }
 
   // User operations
@@ -215,6 +227,190 @@ export class MemStorage implements IStorage {
     return Array.from(this.claimUpdates.values())
       .filter(update => update.claimId === claimId)
       .sort((a, b) => b.createdAt!.getTime() - a.createdAt!.getTime());
+  }
+
+  // Policy product operations
+  async createPolicyProduct(productData: InsertPolicyProduct): Promise<PolicyProduct> {
+    const id = randomUUID();
+    const product: PolicyProduct = {
+      ...productData,
+      id,
+      createdAt: new Date(),
+    } as PolicyProduct;
+    this.policyProducts.set(id, product);
+    return product;
+  }
+
+  async getAllPolicyProducts(): Promise<PolicyProduct[]> {
+    return Array.from(this.policyProducts.values());
+  }
+
+  async getPolicyProductsByCategory(category: string): Promise<PolicyProduct[]> {
+    return Array.from(this.policyProducts.values())
+      .filter(product => product.category === category);
+  }
+
+  async findSimilarPolicies(coverage: number, category: string): Promise<PolicyProduct[]> {
+    return Array.from(this.policyProducts.values())
+      .filter(product => 
+        product.category === category && 
+        product.coverage >= coverage * 0.5 && // Show policies with at least 50% of the coverage
+        product.coverage <= coverage * 2 // Show policies up to 200% of the coverage
+      )
+      .sort((a, b) => b.claimSettlementRatio - a.claimSettlementRatio) // Sort by claim settlement ratio (best first)
+      .slice(0, 5); // Return top 5 alternatives
+  }
+
+  private seedPolicyProducts() {
+    // Seed with real Indian health insurance policies
+    const products = [
+      {
+        policyName: "Star Health Family Optima",
+        insurer: "Star Health",
+        category: "health",
+        coverage: 10, // 10 lakhs
+        premium: 14000,
+        waitingPeriod: 3,
+        copay: 10,
+        claimSettlementRatio: 92,
+        exclusions: "Pre-existing diseases, cosmetic treatments, dental care",
+        keyFeatures: ["Family floater", "Pre-post hospitalization", "Daycare procedures"],
+        ageLimit: "18-65 years",
+        familyFloater: true,
+        preExistingDiseasesCovered: false,
+        noClaimBonus: 50,
+        roomRentCapping: "2% of sum insured"
+      },
+      {
+        policyName: "HDFC ERGO Health Suraksha",
+        insurer: "HDFC ERGO",
+        category: "health",
+        coverage: 5,
+        premium: 8500,
+        waitingPeriod: 2,
+        copay: 20,
+        claimSettlementRatio: 96,
+        exclusions: "Cosmetic surgery, war injuries, nuclear risks",
+        keyFeatures: ["Cashless treatment", "Health checkups", "Emergency assistance"],
+        ageLimit: "18-70 years",
+        familyFloater: false,
+        preExistingDiseasesCovered: true,
+        noClaimBonus: 25,
+        roomRentCapping: "1% of sum insured"
+      },
+      {
+        policyName: "ICICI Lombard Complete Health",
+        insurer: "ICICI Lombard",
+        category: "health",
+        coverage: 15,
+        premium: 22000,
+        waitingPeriod: 2,
+        copay: 0,
+        claimSettlementRatio: 94,
+        exclusions: "Self-inflicted injuries, substance abuse",
+        keyFeatures: ["No copay", "Unlimited restoration", "Global coverage"],
+        ageLimit: "91 days-75 years",
+        familyFloater: true,
+        preExistingDiseasesCovered: true,
+        noClaimBonus: 50,
+        roomRentCapping: "No limit"
+      },
+      {
+        policyName: "Care Health Supreme",
+        insurer: "Care Health",
+        category: "health",
+        coverage: 10,
+        premium: 16500,
+        waitingPeriod: 2,
+        copay: 10,
+        claimSettlementRatio: 89,
+        exclusions: "Congenital diseases, experimental treatments",
+        keyFeatures: ["OPD coverage", "Mental health cover", "Maternity benefits"],
+        ageLimit: "18-65 years",
+        familyFloater: true,
+        preExistingDiseasesCovered: true,
+        noClaimBonus: 100,
+        roomRentCapping: "Single AC room"
+      },
+      {
+        policyName: "Bajaj Allianz Health Guard",
+        insurer: "Bajaj Allianz",
+        category: "health",
+        coverage: 7,
+        premium: 11000,
+        waitingPeriod: 4,
+        copay: 15,
+        claimSettlementRatio: 87,
+        exclusions: "Dental treatments, fertility treatments",
+        keyFeatures: ["Personal accident cover", "Daily cash allowance"],
+        ageLimit: "18-60 years",
+        familyFloater: false,
+        preExistingDiseasesCovered: false,
+        noClaimBonus: 20,
+        roomRentCapping: "1.5% of sum insured"
+      },
+      {
+        policyName: "Max Bupa Health Companion",
+        insurer: "Max Bupa",
+        category: "health",
+        coverage: 20,
+        premium: 28000,
+        waitingPeriod: 1,
+        copay: 5,
+        claimSettlementRatio: 93,
+        exclusions: "War, nuclear risks, intentional self-injury",
+        keyFeatures: ["Reload benefit", "International coverage", "Health coaching"],
+        ageLimit: "18-75 years",
+        familyFloater: true,
+        preExistingDiseasesCovered: true,
+        noClaimBonus: 50,
+        roomRentCapping: "No capping"
+      },
+      {
+        policyName: "Apollo Munich Easy Health",
+        insurer: "Apollo Munich",
+        category: "health",
+        coverage: 5,
+        premium: 7800,
+        waitingPeriod: 3,
+        copay: 25,
+        claimSettlementRatio: 85,
+        exclusions: "Cosmetic surgery, obesity treatments",
+        keyFeatures: ["Easy claim process", "24x7 helpline"],
+        ageLimit: "18-65 years",
+        familyFloater: false,
+        preExistingDiseasesCovered: false,
+        noClaimBonus: 10,
+        roomRentCapping: "1% of sum insured"
+      },
+      {
+        policyName: "Religare Health Total",
+        insurer: "Religare Health",
+        category: "health",
+        coverage: 12,
+        premium: 18000,
+        waitingPeriod: 2,
+        copay: 0,
+        claimSettlementRatio: 91,
+        exclusions: "Pre-existing mental disorders, AIDS",
+        keyFeatures: ["Zero copay", "Domiciliary treatment", "Second opinion"],
+        ageLimit: "18-70 years",
+        familyFloater: true,
+        preExistingDiseasesCovered: true,
+        noClaimBonus: 75,
+        roomRentCapping: "Private room"
+      }
+    ];
+
+    products.forEach(product => {
+      const id = randomUUID();
+      const policyProduct: PolicyProduct = {
+        ...product,
+        id,
+        createdAt: new Date(),
+      } as PolicyProduct;
+      this.policyProducts.set(id, policyProduct);
+    });
   }
 }
 

@@ -197,6 +197,103 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Policy Comparison Routes
+  // Get all policy products
+  app.get('/api/policy-products', async (req: any, res) => {
+    try {
+      const products = await storage.getAllPolicyProducts();
+      res.json(products);
+    } catch (error) {
+      console.error("Error fetching policy products:", error);
+      res.status(500).json({ message: "Failed to fetch policy products" });
+    }
+  });
+
+  // Get policy products by category
+  app.get('/api/policy-products/category/:category', async (req: any, res) => {
+    try {
+      const category = req.params.category;
+      const products = await storage.getPolicyProductsByCategory(category);
+      res.json(products);
+    } catch (error) {
+      console.error("Error fetching policy products by category:", error);
+      res.status(500).json({ message: "Failed to fetch policy products" });
+    }
+  });
+
+  // Compare policy - find similar alternatives
+  app.get('/api/policies/:id/compare', async (req: any, res) => {
+    try {
+      const policyId = req.params.id;
+      const policy = await storage.getPolicy(policyId);
+      
+      if (!policy) {
+        return res.status(404).json({ message: "Policy not found" });
+      }
+
+      // For demo, assume all uploaded policies are health insurance with 10L coverage
+      // In reality, you'd extract this from the policy text or analysis
+      const estimatedCoverage = 10; // lakhs
+      const category = "health";
+      
+      const alternatives = await storage.findSimilarPolicies(estimatedCoverage, category);
+      
+      res.json({
+        current: {
+          id: policy.id,
+          fileName: policy.fileName,
+          estimatedCoverage,
+          category
+        },
+        alternatives,
+        comparisonDate: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error("Error comparing policy:", error);
+      res.status(500).json({ message: "Failed to compare policy" });
+    }
+  });
+
+  // Get detailed comparison between policies
+  app.post('/api/policies/compare-detailed', async (req: any, res) => {
+    try {
+      const { policyIds } = req.body;
+      
+      if (!Array.isArray(policyIds) || policyIds.length === 0) {
+        return res.status(400).json({ message: "Policy IDs array is required" });
+      }
+
+      const policies = [];
+      for (const id of policyIds) {
+        const policy = await storage.getAllPolicyProducts().then(products => 
+          products.find(p => p.id === id)
+        );
+        if (policy) {
+          policies.push(policy);
+        }
+      }
+
+      res.json({
+        policies,
+        comparisonMetrics: {
+          coverageRange: {
+            min: Math.min(...policies.map(p => p.coverage)),
+            max: Math.max(...policies.map(p => p.coverage))
+          },
+          premiumRange: {
+            min: Math.min(...policies.map(p => p.premium)),
+            max: Math.max(...policies.map(p => p.premium))
+          },
+          bestClaimRatio: Math.max(...policies.map(p => p.claimSettlementRatio || 0)),
+          shortestWaitingPeriod: Math.min(...policies.map(p => p.waitingPeriod || 0))
+        }
+      });
+    } catch (error) {
+      console.error("Error in detailed comparison:", error);
+      res.status(500).json({ message: "Failed to perform detailed comparison" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
