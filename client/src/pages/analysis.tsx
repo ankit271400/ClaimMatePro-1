@@ -1,9 +1,10 @@
 import { useParams } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { ArrowLeft, FileText, TrendingUp, ArrowLeftRight } from "lucide-react";
+import { ArrowLeft, FileText, TrendingUp, ArrowLeftRight, Shield, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import Navigation from "@/components/navigation";
 import RiskScoreGauge from "@/components/risk-score-gauge";
 import ClauseCard from "@/components/clause-card";
@@ -99,6 +100,23 @@ export default function AnalysisPage() {
     }
   };
 
+  // Check if policy has been blockchain verified
+  const isBlockchainVerified = analysis.recommendations?.includes('🔒 Blockchain Verification') || 
+                               analysis.recommendations?.includes('Yellow Network');
+
+  // Split recommendations to separate blockchain section
+  const getRecommendationsData = () => {
+    if (!analysis.recommendations) return { main: '', blockchain: '' };
+    
+    const parts = analysis.recommendations.split('\n\n🔒 Blockchain Verification:');
+    return {
+      main: parts[0],
+      blockchain: parts.length > 1 ? parts[1] : ''
+    };
+  };
+
+  const { main: mainRecommendations, blockchain: blockchainInfo } = getRecommendationsData();
+
   return (
     <div className="min-h-screen bg-bg-light">
       <Navigation />
@@ -158,7 +176,18 @@ export default function AnalysisPage() {
             <div className="lg:col-span-2">
               <Card>
                 <CardHeader>
-                  <CardTitle>Executive Summary</CardTitle>
+                  <div className="flex items-center justify-between">
+                    <CardTitle>Executive Summary</CardTitle>
+                    {isBlockchainVerified && (
+                      <Badge 
+                        className="bg-blue-100 text-blue-700 border-blue-200"
+                        data-testid="badge-blockchain-verified"
+                      >
+                        <Shield className="w-3 h-3 mr-1" />
+                        Blockchain Verified
+                      </Badge>
+                    )}
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <p className="text-slate-700 leading-relaxed mb-6" data-testid="text-summary">
@@ -168,9 +197,29 @@ export default function AnalysisPage() {
                   {analysis.recommendations && (
                     <div>
                       <h4 className="font-semibold text-slate-900 mb-3">Recommendations</h4>
-                      <p className="text-slate-700 leading-relaxed" data-testid="text-recommendations">
-                        {analysis.recommendations}
+                      <p className="text-slate-700 leading-relaxed mb-4" data-testid="text-recommendations">
+                        {mainRecommendations}
                       </p>
+                      
+                      {/* Blockchain Security Section */}
+                      {isBlockchainVerified && blockchainInfo && (
+                        <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                          <div className="flex items-start space-x-3">
+                            <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                              <Shield className="w-4 h-4 text-blue-600" />
+                            </div>
+                            <div className="flex-1">
+                              <h5 className="font-semibold text-blue-900 mb-2 flex items-center">
+                                <Check className="w-4 h-4 mr-2" />
+                                Yellow Network Security
+                              </h5>
+                              <p className="text-blue-800 text-sm leading-relaxed" data-testid="text-blockchain-info">
+                                {blockchainInfo.trim()}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                 </CardContent>

@@ -1,9 +1,10 @@
 import { useParams } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { ArrowLeft, Check, Eye, Gavel, CreditCard, MessageCircle, Phone } from "lucide-react";
+import { ArrowLeft, Check, Eye, Gavel, CreditCard, MessageCircle, Phone, Shield, Star, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import Navigation from "@/components/navigation";
 import StatusTracker from "@/components/status-tracker";
 import { useLocation } from "wouter";
@@ -66,6 +67,21 @@ export default function ClaimTrackerPage() {
   }
 
   const { claim, updates } = data;
+
+  // Check if claim is blockchain secured
+  const isBlockchainSecured = updates.some(update => 
+    update.title?.includes('Blockchain') || 
+    update.title?.includes('Yellow Network') ||
+    update.description?.includes('🔒') ||
+    update.description?.includes('Yellow Network')
+  );
+
+  // Get blockchain-related updates
+  const blockchainUpdates = updates.filter(update => 
+    update.title?.includes('Blockchain') || 
+    update.title?.includes('Yellow Network') ||
+    update.description?.includes('🔒')
+  );
 
   const getStatusSteps = () => {
     return [
@@ -152,7 +168,21 @@ export default function ClaimTrackerPage() {
             transition={{ duration: 0.6, delay: 0.1 }}
           >
             <Card className="mb-8">
-              <CardContent className="p-8">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle>Claim Overview</CardTitle>
+                  {isBlockchainSecured && (
+                    <Badge 
+                      className="bg-blue-100 text-blue-700 border-blue-200"
+                      data-testid="badge-blockchain-secured"
+                    >
+                      <Shield className="w-3 h-3 mr-1" />
+                      Yellow Network Secured
+                    </Badge>
+                  )}
+                </div>
+              </CardHeader>
+              <CardContent className="p-8 pt-0">
                 <div className="grid md:grid-cols-3 gap-6 mb-8">
                   <div className="text-center">
                     <div className="text-2xl font-bold text-slate-900" data-testid="text-claim-number">
@@ -164,7 +194,9 @@ export default function ClaimTrackerPage() {
                     <div className="text-2xl font-bold text-secondary" data-testid="text-estimated-time">
                       {claim.estimatedProcessingDays} days
                     </div>
-                    <div className="text-sm text-slate-600">Estimated Processing Time</div>
+                    <div className="text-sm text-slate-600">
+                      {isBlockchainSecured ? 'Accelerated Processing' : 'Estimated Processing Time'}
+                    </div>
                   </div>
                   <div className="text-center">
                     <div className="text-2xl font-bold text-success" data-testid="text-claim-amount">
@@ -173,6 +205,38 @@ export default function ClaimTrackerPage() {
                     <div className="text-sm text-slate-600">Claim Amount</div>
                   </div>
                 </div>
+
+                {/* Blockchain Security Features */}
+                {isBlockchainSecured && (
+                  <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <div className="flex items-start space-x-3">
+                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                        <Lock className="w-4 h-4 text-blue-600" />
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-semibold text-blue-900 mb-2">Enhanced Security Features</h4>
+                        <div className="grid grid-cols-2 gap-3 text-sm">
+                          <div className="flex items-center text-blue-800">
+                            <Check className="w-3 h-3 mr-2" />
+                            Decentralized verification
+                          </div>
+                          <div className="flex items-center text-blue-800">
+                            <Check className="w-3 h-3 mr-2" />
+                            Tamper-proof tracking
+                          </div>
+                          <div className="flex items-center text-blue-800">
+                            <Check className="w-3 h-3 mr-2" />
+                            Instant settlement
+                          </div>
+                          <div className="flex items-center text-blue-800">
+                            <Check className="w-3 h-3 mr-2" />
+                            Cross-chain payments
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 <StatusTracker steps={getStatusSteps()} />
               </CardContent>
@@ -192,28 +256,63 @@ export default function ClaimTrackerPage() {
               <CardContent>
                 {updates.length > 0 ? (
                   <div className="space-y-4">
-                    {updates.map((update) => (
-                      <div 
-                        key={update.id} 
-                        className="flex items-start space-x-4 p-4 border border-slate-100 rounded-lg"
-                        data-testid={`update-${update.id}`}
-                      >
-                        <div className="w-2 h-2 bg-secondary rounded-full flex-shrink-0 mt-2"></div>
-                        <div className="flex-1">
-                          <div className="flex items-center justify-between mb-1">
-                            <h4 className="text-sm font-medium text-slate-900">
-                              {update.title}
-                            </h4>
-                            <span className="text-xs text-slate-500">
-                              {new Date(update.createdAt!).toLocaleDateString()}
-                            </span>
+                    {updates.map((update) => {
+                      const isBlockchainUpdate = update.title?.includes('Blockchain') || 
+                                                update.title?.includes('Yellow Network') ||
+                                                update.description?.includes('🔒');
+                      
+                      return (
+                        <div 
+                          key={update.id} 
+                          className={`flex items-start space-x-4 p-4 rounded-lg border ${
+                            isBlockchainUpdate 
+                              ? 'border-blue-200 bg-blue-50' 
+                              : 'border-slate-100'
+                          }`}
+                          data-testid={`update-${update.id}`}
+                        >
+                          <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-1 ${
+                            isBlockchainUpdate 
+                              ? 'bg-blue-100' 
+                              : 'bg-slate-100'
+                          }`}>
+                            {isBlockchainUpdate ? (
+                              <Shield className="w-3 h-3 text-blue-600" />
+                            ) : (
+                              <div className="w-2 h-2 bg-secondary rounded-full"></div>
+                            )}
                           </div>
-                          <p className="text-sm text-slate-600">
-                            {update.description}
-                          </p>
+                          <div className="flex-1">
+                            <div className="flex items-center justify-between mb-1">
+                              <div className="flex items-center space-x-2">
+                                <h4 className={`text-sm font-medium ${
+                                  isBlockchainUpdate ? 'text-blue-900' : 'text-slate-900'
+                                }`}>
+                                  {update.title}
+                                </h4>
+                                {isBlockchainUpdate && (
+                                  <Badge 
+                                    className="bg-blue-100 text-blue-700 text-xs px-2 py-0.5"
+                                    data-testid="badge-yellow-network"
+                                  >
+                                    <Star className="w-2 h-2 mr-1" />
+                                    Secured
+                                  </Badge>
+                                )}
+                              </div>
+                              <span className="text-xs text-slate-500">
+                                {new Date(update.createdAt!).toLocaleDateString()}
+                              </span>
+                            </div>
+                            <p className={`text-sm ${
+                              isBlockchainUpdate ? 'text-blue-800' : 'text-slate-600'
+                            }`}>
+                              {update.description}
+                            </p>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 ) : (
                   <div className="text-center py-8">
