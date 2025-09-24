@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ClaimMate - AI-Powered Insurance Policy Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    primary: '#0f766e',
+                    secondary: '#fb923c',
+                    bgLight: '#f8fafc',
+                    danger: '#ef4444',
+                    success: '#10b981',
+                    warning: '#f59e0b',
+                    muted: '#64748b'
+                },
+                fontFamily: {
+                    heading: ['Poppins', 'sans-serif'],
+                    body: ['Inter', 'sans-serif'],
+                }
+            }
+        }
+    };
+    </script>
+</head>
+<body class="bg-bgLight font-body text-slate-900 antialiased">
+
+    <!-- Navigation -->
+    <!-- @COMPONENT: Navigation [responsive header with auth state] -->
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                        <i data-lucide="shield-check" class="w-5 h-5 text-white"></i>
+                    </div>
+                    <span class="text-xl font-heading font-bold text-slate-900">ClaimMate</span>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#features" class="text-slate-600 hover:text-primary transition-colors">Features</a>
+                    <a href="#how-it-works" class="text-slate-600 hover:text-primary transition-colors">How it Works</a>
+                    <a href="#security" class="text-slate-600 hover:text-primary transition-colors">Security</a>
+                    <button class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors">
+                        Sign In
+                    </button>
+                </div>
+
+                <button class="md:hidden p-2" data-event="click:toggleMobileMenu">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+    <!-- @END_COMPONENT: Navigation -->
+
+    <!-- Hero Section -->
+    <!-- @COMPONENT: HeroSection [main landing area with CTA] -->
+    <section class="relative bg-gradient-to-br from-primary/5 to-secondary/5 pt-16 pb-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="lg:grid lg:grid-cols-2 lg:gap-12 items-center">
+                <div class="max-w-2xl">
+                    <h1 class="text-4xl lg:text-6xl font-heading font-bold text-slate-900 leading-tight">
+                        Understand Your 
+                        <span class="text-primary">Insurance Policy</span> 
+                        in Plain English
+                    </h1>
+                    <p class="mt-6 text-lg text-slate-600 leading-relaxed">
+                        Upload your policy document and get an AI-powered risk analysis, plain language summaries, and personalized claim preparation guidance in minutes.
+                    </p>
+                    
+                    <!-- Trust Badges -->
+                    <div class="mt-8 flex flex-wrap items-center gap-6">
+                        <div class="flex items-center space-x-2">
+                            <i data-lucide="shield-check" class="w-5 h-5 text-success"></i>
+                            <span class="text-sm text-slate-600">Secure & Private</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <i data-lucide="eye-off" class="w-5 h-5 text-success"></i>
+                            <span class="text-sm text-slate-600">100% Confidential</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <i data-lucide="clock" class="w-5 h-5 text-success"></i>
+                            <span class="text-sm text-slate-600">Results in Minutes</span>
+                        </div>
+                    </div>
+
+                    <div class="mt-10">
+                        <button class="bg-primary text-white px-8 py-4 rounded-xl text-lg font-semibold hover:bg-primary/90 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105" 
+                                data-event="click:scrollToUpload">
+                            Analyze My Policy Now
+                            <i data-lucide="arrow-right" class="w-5 h-5 ml-2 inline"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="mt-12 lg:mt-0">
+                    <!-- Modern illustration of document analysis -->
+                    <!-- A clean, modern illustration showing document analysis with AI -->
+                    <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&h=600" 
+                         alt="Modern document analysis dashboard" 
+                         class="rounded-2xl shadow-2xl w-full" />
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: HeroSection -->
+
+    <!-- Upload Section -->
+    <!-- @COMPONENT: UploadSection [drag-and-drop file upload interface] -->
+    <section id="upload" class="py-16 bg-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-heading font-bold text-slate-900">Upload Your Policy Document</h2>
+                <p class="mt-4 text-lg text-slate-600">Drag and drop your PDF or image file, or click to browse</p>
+            </div>
+
+            <!-- Upload Zone -->
+            <div class="border-2 border-dashed border-primary/20 rounded-2xl p-12 text-center hover:border-primary/40 transition-all duration-300 hover:bg-primary/5 cursor-pointer"
+                 data-implementation="Should handle file drop and upload with progress">
+                <div class="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+                    <i data-lucide="upload-cloud" class="w-8 h-8 text-primary"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-slate-900 mb-2">Drop your policy document here</h3>
+                <p class="text-slate-600 mb-4">PDF, JPG, PNG up to 10MB</p>
+                <button class="bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/90 transition-colors">
+                    Choose File
+                </button>
+            </div>
+
+            <!-- Upload Progress (Hidden by default) -->
+            <!-- @STATE: uploadProgress:number = 0, isUploading:boolean = false -->
+            <div class="mt-8 hidden" data-mock="true" data-bind="isUploading">
+                <div class="bg-slate-100 rounded-full h-3">
+                    <div class="bg-primary h-3 rounded-full transition-all duration-300" 
+                         style="width: 65%" data-bind="uploadProgress"></div>
+                </div>
+                <div class="flex justify-between mt-2 text-sm text-slate-600">
+                    <span>Uploading policy.pdf...</span>
+                    <span data-bind="uploadProgress">65%</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: UploadSection -->
+
+    <!-- Analysis Results Section -->
+    <!-- @COMPONENT: AnalysisResults [risk score and flagged clauses display] -->
+    <section class="py-16 bg-bgLight">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-heading font-bold text-slate-900">Policy Analysis Results</h2>
+                <p class="mt-4 text-lg text-slate-600">AI-powered analysis of your insurance policy</p>
+            </div>
+
+            <div class="grid lg:grid-cols-3 gap-8">
+                <!-- Risk Score Card -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white rounded-2xl p-8 shadow-lg">
+                        <h3 class="text-xl font-heading font-semibold text-slate-900 mb-6 text-center">Risk Score</h3>
+                        
+                        <!-- Risk Score Gauge -->
+                        <div id="risk-gauge" class="w-full h-48 mb-6"></div>
+                        
+                        <div class="text-center">
+                            <div class="text-3xl font-bold text-warning" data-bind="riskScore">7.2</div>
+                            <div class="text-sm text-slate-600">Out of 10</div>
+                            <div class="mt-4 px-4 py-2 bg-warning/10 rounded-lg">
+                                <span class="text-warning font-medium">Moderate Risk</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Flagged Clauses -->
+                <div class="lg:col-span-2">
+                    <div class="space-y-6">
+                        <h3 class="text-xl font-heading font-semibold text-slate-900">Flagged Clauses</h3>
+                        
+                        <!-- @MAP: flaggedClauses.map(clause => ( -->
+                        <!-- High Risk Clause -->
+                        <div class="bg-white rounded-xl p-6 shadow-sm border-l-4 border-danger" data-mock="true">
+                            <div class="flex items-start justify-between">
+                                <div class="flex items-start space-x-4">
+                                    <div class="w-8 h-8 bg-danger/10 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                        <i data-lucide="alert-triangle" class="w-4 h-4 text-danger"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex items-center space-x-2 mb-2">
+                                            <h4 class="font-semibold text-slate-900" data-bind="clause.title">Pre-existing Condition Exclusion</h4>
+                                            <span class="bg-danger/10 text-danger text-xs font-medium px-2 py-1 rounded-full">High Risk</span>
+                                        </div>
+                                        <p class="text-slate-600 mb-3" data-bind="clause.summary">
+                                            Your policy may not cover medical conditions that existed before your coverage started, even if undiagnosed.
+                                        </p>
+                                        <button class="text-primary hover:text-primary/80 text-sm font-medium flex items-center" 
+                                                data-event="click:toggleClauseExpansion">
+                                            View Original Text
+                                            <i data-lucide="chevron-down" class="w-4 h-4 ml-1"></i>
+                                        </button>
+                                        
+                                        <!-- Expandable original text -->
+                                        <div class="hidden mt-4 p-4 bg-slate-50 rounded-lg text-sm text-slate-700">
+                                            <strong>Original Policy Language:</strong><br>
+                                            "Coverage shall not extend to any medical condition, illness, or injury that existed, manifested symptoms, or required treatment prior to the effective date of this policy, regardless of whether such condition was diagnosed or disclosed at the time of application."
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Medium Risk Clause -->
+                        <div class="bg-white rounded-xl p-6 shadow-sm border-l-4 border-warning" data-mock="true">
+                            <div class="flex items-start justify-between">
+                                <div class="flex items-start space-x-4">
+                                    <div class="w-8 h-8 bg-warning/10 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                        <i data-lucide="info" class="w-4 h-4 text-warning"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex items-center space-x-2 mb-2">
+                                            <h4 class="font-semibold text-slate-900" data-bind="clause.title">Waiting Period Restrictions</h4>
+                                            <span class="bg-warning/10 text-warning text-xs font-medium px-2 py-1 rounded-full">Medium Risk</span>
+                                        </div>
+                                        <p class="text-slate-600 mb-3" data-bind="clause.summary">
+                                            Certain benefits have a 6-month waiting period before you can file claims. Plan accordingly for timing.
+                                        </p>
+                                        <button class="text-primary hover:text-primary/80 text-sm font-medium flex items-center"
+                                                data-event="click:toggleClauseExpansion">
+                                            View Original Text
+                                            <i data-lucide="chevron-down" class="w-4 h-4 ml-1"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Low Risk Clause -->
+                        <div class="bg-white rounded-xl p-6 shadow-sm border-l-4 border-success" data-mock="true">
+                            <div class="flex items-start justify-between">
+                                <div class="flex items-start space-x-4">
+                                    <div class="w-8 h-8 bg-success/10 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                        <i data-lucide="check-circle" class="w-4 h-4 text-success"></i>
+                                    </div>
+                                    <div class="flex-1">
+                                        <div class="flex items-center space-x-2 mb-2">
+                                            <h4 class="font-semibold text-slate-900" data-bind="clause.title">Comprehensive Coverage</h4>
+                                            <span class="bg-success/10 text-success text-xs font-medium px-2 py-1 rounded-full">Favorable</span>
+                                        </div>
+                                        <p class="text-slate-600 mb-3" data-bind="clause.summary">
+                                            Your policy includes broad coverage for emergency care, specialist visits, and diagnostic procedures with reasonable deductibles.
+                                        </p>
+                                        <button class="text-primary hover:text-primary/80 text-sm font-medium flex items-center"
+                                                data-event="click:toggleClauseExpansion">
+                                            View Original Text
+                                            <i data-lucide="chevron-down" class="w-4 h-4 ml-1"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- @END_MAP )) -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: AnalysisResults -->
+
+    <!-- Claim Preparation Section -->
+    <!-- @COMPONENT: ClaimPreparation [checklist and document upload interface] -->
+    <section class="py-16 bg-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-heading font-bold text-slate-900">Claim Preparation Checklist</h2>
+                <p class="mt-4 text-lg text-slate-600">Get ready to file your claim with this personalized checklist</p>
+            </div>
+
+            <!-- Progress Overview -->
+            <div class="mb-8 p-6 bg-primary/5 rounded-xl">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-semibold text-slate-900">Progress Overview</h3>
+                    <span class="text-sm text-slate-600" data-bind="completionStats">3 of 7 completed</span>
+                </div>
+                <div class="bg-slate-200 rounded-full h-2">
+                    <div class="bg-primary h-2 rounded-full transition-all duration-300" style="width: 43%" data-bind="completionPercentage"></div>
+                </div>
+            </div>
+
+            <!-- Checklist Timeline -->
+            <div class="space-y-6">
+                <!-- @MAP: checklistItems.map((item, index) => ( -->
+                <!-- Completed Item -->
+                <div class="flex items-start space-x-4" data-mock="true">
+                    <div class="w-8 h-8 bg-success rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                        <i data-lucide="check" class="w-4 h-4 text-white"></i>
+                    </div>
+                    <div class="flex-1 pb-6 border-l border-slate-200 ml-4 pl-6">
+                        <h4 class="font-semibold text-slate-900 mb-2" data-bind="item.title">Gather Medical Records</h4>
+                        <p class="text-slate-600 text-sm mb-3" data-bind="item.description">
+                            Collect all relevant medical documentation from your healthcare providers.
+                        </p>
+                        <div class="flex items-center space-x-2 text-sm text-success">
+                            <i data-lucide="paperclip" class="w-4 h-4"></i>
+                            <span>3 documents uploaded</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Current Item -->
+                <div class="flex items-start space-x-4" data-mock="true">
+                    <div class="w-8 h-8 bg-secondary border-4 border-secondary/20 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                        <div class="w-2 h-2 bg-white rounded-full"></div>
+                    </div>
+                    <div class="flex-1 pb-6 border-l border-slate-200 ml-4 pl-6">
+                        <h4 class="font-semibold text-slate-900 mb-2" data-bind="item.title">Complete Claim Form</h4>
+                        <p class="text-slate-600 text-sm mb-3" data-bind="item.description">
+                            Fill out the official claim form with accurate information about your incident.
+                        </p>
+                        <div class="mt-4 p-4 border-2 border-dashed border-slate-300 rounded-lg text-center hover:border-secondary/40 transition-colors cursor-pointer"
+                             data-implementation="File upload component for claim documents">
+                            <i data-lucide="upload" class="w-6 h-6 text-slate-400 mx-auto mb-2"></i>
+                            <p class="text-sm text-slate-600">Upload completed claim form</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pending Item -->
+                <div class="flex items-start space-x-4" data-mock="true">
+                    <div class="w-8 h-8 bg-slate-200 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                        <div class="w-2 h-2 bg-slate-400 rounded-full"></div>
+                    </div>
+                    <div class="flex-1 pb-6 border-l border-slate-200 ml-4 pl-6">
+                        <h4 class="font-semibold text-slate-900 mb-2" data-bind="item.title">Submit Supporting Evidence</h4>
+                        <p class="text-slate-600 text-sm mb-3" data-bind="item.description">
+                            Include photos, receipts, or other documentation that supports your claim.
+                        </p>
+                        <div class="text-sm text-slate-500">Not started</div>
+                    </div>
+                </div>
+
+                <!-- Additional pending items would follow the same pattern -->
+                <!-- @END_MAP )) -->
+            </div>
+
+            <!-- Action Button -->
+            <div class="mt-10 text-center">
+                <button class="bg-secondary text-white px-8 py-3 rounded-lg font-semibold hover:bg-secondary/90 transition-colors"
+                        data-event="click:continueToTracking">
+                    Continue to Claim Tracker
+                </button>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: ClaimPreparation -->
+
+    <!-- Claim Tracker Section -->
+    <!-- @COMPONENT: ClaimTracker [horizontal progress tracker with status updates] -->
+    <section class="py-16 bg-bgLight">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-heading font-bold text-slate-900">Claim Status Tracker</h2>
+                <p class="mt-4 text-lg text-slate-600">Track your claim progress in real-time</p>
+            </div>
+
+            <!-- Claim Overview Card -->
+            <div class="bg-white rounded-2xl p-8 shadow-lg mb-8">
+                <div class="grid md:grid-cols-3 gap-6 mb-8">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-slate-900" data-bind="claimNumber">#CLM-2024-001234</div>
+                        <div class="text-sm text-slate-600">Claim Number</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-secondary" data-bind="estimatedTime">7-10 days</div>
+                        <div class="text-sm text-slate-600">Estimated Processing Time</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-success" data-bind="claimAmount">$2,450.00</div>
+                        <div class="text-sm text-slate-600">Claim Amount</div>
+                    </div>
+                </div>
+
+                <!-- Status Timeline -->
+                <div class="relative">
+                    <!-- Progress Line -->
+                    <div class="absolute top-4 left-0 right-0 h-1 bg-slate-200 rounded-full"></div>
+                    <div class="absolute top-4 left-0 h-1 bg-primary rounded-full transition-all duration-500" 
+                         style="width: 60%" data-bind="progressWidth"></div>
+
+                    <!-- Status Steps -->
+                    <div class="relative flex justify-between">
+                        <!-- Step 1: Submitted -->
+                        <div class="flex flex-col items-center" data-mock="true">
+                            <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center z-10">
+                                <i data-lucide="check" class="w-4 h-4 text-white"></i>
+                            </div>
+                            <div class="mt-2 text-center">
+                                <div class="text-sm font-medium text-slate-900">Submitted</div>
+                                <div class="text-xs text-slate-600">Jan 15, 2024</div>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: Under Review -->
+                        <div class="flex flex-col items-center" data-mock="true">
+                            <div class="w-8 h-8 bg-primary rounded-full flex items-center justify-center z-10">
+                                <i data-lucide="eye" class="w-4 h-4 text-white"></i>
+                            </div>
+                            <div class="mt-2 text-center">
+                                <div class="text-sm font-medium text-slate-900">Under Review</div>
+                                <div class="text-xs text-slate-600">Jan 16, 2024</div>
+                            </div>
+                        </div>
+
+                        <!-- Step 3: Processing (Current) -->
+                        <div class="flex flex-col items-center" data-mock="true">
+                            <div class="w-8 h-8 bg-secondary border-4 border-secondary/20 rounded-full flex items-center justify-center z-10">
+                                <div class="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                            </div>
+                            <div class="mt-2 text-center">
+                                <div class="text-sm font-medium text-secondary">Processing</div>
+                                <div class="text-xs text-slate-600">In Progress</div>
+                            </div>
+                        </div>
+
+                        <!-- Step 4: Decision -->
+                        <div class="flex flex-col items-center" data-mock="true">
+                            <div class="w-8 h-8 bg-slate-200 rounded-full flex items-center justify-center z-10">
+                                <i data-lucide="gavel" class="w-4 h-4 text-slate-400"></i>
+                            </div>
+                            <div class="mt-2 text-center">
+                                <div class="text-sm font-medium text-slate-600">Decision</div>
+                                <div class="text-xs text-slate-600">Pending</div>
+                            </div>
+                        </div>
+
+                        <!-- Step 5: Payment -->
+                        <div class="flex flex-col items-center" data-mock="true">
+                            <div class="w-8 h-8 bg-slate-200 rounded-full flex items-center justify-center z-10">
+                                <i data-lucide="credit-card" class="w-4 h-4 text-slate-400"></i>
+                            </div>
+                            <div class="mt-2 text-center">
+                                <div class="text-sm font-medium text-slate-600">Payment</div>
+                                <div class="text-xs text-slate-600">Pending</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Updates -->
+            <div class="bg-white rounded-2xl p-6 shadow-lg">
+                <h3 class="text-lg font-semibold text-slate-900 mb-4">Recent Updates</h3>
+                <div class="space-y-4">
+                    <!-- @MAP: recentUpdates.map(update => ( -->
+                    <div class="flex items-start space-x-4 p-4 border border-slate-100 rounded-lg" data-mock="true">
+                        <div class="w-2 h-2 bg-secondary rounded-full flex-shrink-0 mt-2"></div>
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between mb-1">
+                                <h4 class="text-sm font-medium text-slate-900" data-bind="update.title">Additional Documentation Requested</h4>
+                                <span class="text-xs text-slate-500" data-bind="update.timestamp">2 hours ago</span>
+                            </div>
+                            <p class="text-sm text-slate-600" data-bind="update.description">
+                                Please provide your pharmacy receipts for the period January 10-15, 2024. Upload via your ClaimMate dashboard.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start space-x-4 p-4 border border-slate-100 rounded-lg" data-mock="true">
+                        <div class="w-2 h-2 bg-success rounded-full flex-shrink-0 mt-2"></div>
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between mb-1">
+                                <h4 class="text-sm font-medium text-slate-900" data-bind="update.title">Claim Moved to Processing</h4>
+                                <span class="text-xs text-slate-500" data-bind="update.timestamp">1 day ago</span>
+                            </div>
+                            <p class="text-sm text-slate-600" data-bind="update.description">
+                                Your claim has passed initial review and is now being processed by our medical review team.
+                            </p>
+                        </div>
+                    </div>
+                    <!-- @END_MAP )) -->
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: ClaimTracker -->
+
+    <!-- Contact Support Section -->
+    <!-- @COMPONENT: ContactSupport [advisor escalation and chat interface] -->
+    <section class="py-16 bg-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-gradient-to-r from-primary to-primary/80 rounded-2xl p-8 text-white text-center">
+                <h2 class="text-2xl font-heading font-bold mb-4">Need Help with Your Claim?</h2>
+                <p class="text-primary-100 mb-6">
+                    Connect with our expert advisors for personalized guidance on your insurance claim process.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <button class="bg-white text-primary px-6 py-3 rounded-lg font-semibold hover:bg-slate-50 transition-colors flex items-center justify-center"
+                            data-event="click:startChat">
+                        <i data-lucide="message-circle" class="w-5 h-5 mr-2"></i>
+                        Chat with Advisor
+                    </button>
+                    <button class="bg-primary-600 border border-white/20 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-600/80 transition-colors flex items-center justify-center"
+                            data-event="click:scheduleCall">
+                        <i data-lucide="phone" class="w-5 h-5 mr-2"></i>
+                        Schedule Call
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- @END_COMPONENT: ContactSupport -->
+
+    <!-- Footer -->
+    <!-- @COMPONENT: Footer [site navigation and legal links] -->
+    <footer class="bg-slate-900 text-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div class="md:col-span-2">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                            <i data-lucide="shield-check" class="w-5 h-5 text-white"></i>
+                        </div>
+                        <span class="text-xl font-heading font-bold">ClaimMate</span>
+                    </div>
+                    <p class="text-slate-300 mb-4">
+                        Empowering insurance customers with AI-powered policy analysis and claim guidance.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-slate-300 hover:text-white">
+                            <i data-lucide="twitter" class="w-5 h-5"></i>
+                        </a>
+                        <a href="#" class="text-slate-300 hover:text-white">
+                            <i data-lucide="linkedin" class="w-5 h-5"></i>
+                        </a>
+                        <a href="#" class="text-slate-300 hover:text-white">
+                            <i data-lucide="mail" class="w-5 h-5"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    <h3 class="font-semibold mb-4">Product</h3>
+                    <ul class="space-y-2 text-slate-300">
+                        <li><a href="#" class="hover:text-white">Features</a></li>
+                        <li><a href="#" class="hover:text-white">Security</a></li>
+                        <li><a href="#" class="hover:text-white">Pricing</a></li>
+                        <li><a href="#" class="hover:text-white">API</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 class="font-semibold mb-4">Support</h3>
+                    <ul class="space-y-2 text-slate-300">
+                        <li><a href="#" class="hover:text-white">Help Center</a></li>
+                        <li><a href="#" class="hover:text-white">Contact Us</a></li>
+                        <li><a href="#" class="hover:text-white">Privacy Policy</a></li>
+                        <li><a href="#" class="hover:text-white">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-slate-800 mt-12 pt-8 text-center text-slate-400">
+                <p>&copy; 2024 ClaimMate. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    <!-- @END_COMPONENT: Footer -->
+
+    <script>
+    (function() {
+        // Initialize Lucide icons
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+
+        // Initialize ApexCharts Risk Gauge
+        // @FUNCTIONALITY: Risk score gauge should update based on actual analysis results
+        const riskGaugeOptions = {
+            series: [72], // Risk score percentage
+            chart: {
+                height: 200,
+                type: 'radialBar',
+            },
+            plotOptions: {
+                radialBar: {
+                    hollow: {
+                        size: '60%',
+                    },
+                    dataLabels: {
+                        name: {
+                            show: false,
+                        },
+                        value: {
+                            show: true,
+                            fontSize: '24px',
+                            fontWeight: 'bold',
+                            color: '#f59e0b',
+                            formatter: function(val) {
+                                return '7.2';
+                            }
+                        }
+                    },
+                    track: {
+                        background: '#f1f5f9',
+                    }
+                }
+            },
+            fill: {
+                type: 'gradient',
+                gradient: {
+                    shade: 'dark',
+                    type: 'horizontal',
+                    shadeIntensity: 0.5,
+                    gradientToColors: ['#ef4444'],
+                    inverseColors: true,
+                    opacityFrom: 1,
+                    opacityTo: 1,
+                    stops: [0, 100]
+                }
+            },
+            colors: ['#10b981'],
+        };
+
+        if (document.getElementById('risk-gauge')) {
+            const riskGauge = new ApexCharts(document.getElementById('risk-gauge'), riskGaugeOptions);
+            riskGauge.render();
+        }
+
+        // Smooth scrolling for navigation links
+        document.addEventListener('click', function(e) {
+            const target = e.target.closest('[href^="#"]');
+            if (target) {
+                e.preventDefault();
+                const targetElement = document.querySelector(target.getAttribute('href'));
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            }
+        });
+
+        // TODO: Implement file upload functionality with progress tracking
+        // TODO: Implement clause expansion/collapse functionality
+        // TODO: Implement real-time claim status updates
+        // TODO: Implement chat interface for advisor communication
+        // TODO: Implement mobile menu toggle functionality
+        
+    })();
+    </script>
+</body>
+</html>
