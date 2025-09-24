@@ -22,12 +22,105 @@ export default function ClaimTrackerPage() {
   const { id } = useParams();
   const [, setLocation] = useLocation();
 
-
+  // Query for single claim details (when ID is provided)
   const { data, isLoading, error } = useQuery<ClaimDetailsResponse>({
     queryKey: [`/api/claims/${id}`],
     enabled: !!id,
   });
 
+  // Query for all claims (when no ID is provided)
+  const { data: claimsData, isLoading: claimsLoading } = useQuery<Claim[]>({
+    queryKey: ['/api/claims'],
+    enabled: !id,
+  });
+
+  // If no ID provided, show claims list
+  if (!id) {
+    if (claimsLoading) {
+      return (
+        <div className="min-h-screen bg-bg-light">
+          <Navigation />
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <Skeleton className="h-8 w-64 mb-8" />
+            <div className="space-y-4">
+              <Skeleton className="h-24 w-full" />
+              <Skeleton className="h-24 w-full" />
+              <Skeleton className="h-24 w-full" />
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="min-h-screen bg-bg-light">
+        <Navigation />
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="mb-8">
+            <h1 className="text-3xl font-heading font-bold text-slate-900 mb-2">
+              Your Claims
+            </h1>
+            <p className="text-lg text-slate-600">
+              Track the progress of all your insurance claims
+            </p>
+          </div>
+
+          {claimsData && claimsData.length > 0 ? (
+            <div className="space-y-4">
+              {claimsData.map((claim) => (
+                <Card 
+                  key={claim.id} 
+                  className="cursor-pointer hover:shadow-md transition-shadow"
+                  onClick={() => setLocation(`/claim-tracker/${claim.id}`)}
+                  data-testid={`claim-card-${claim.id}`}
+                >
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="font-semibold text-slate-900 mb-1">
+                          Claim #{claim.claimNumber}
+                        </h3>
+                        <p className="text-sm text-slate-600 mb-2">
+                          {claim.description}
+                        </p>
+                        <div className="flex items-center space-x-4 text-sm">
+                          <span className="text-slate-500">
+                            Amount: <span className="font-medium text-success">
+                              ${((claim.amount || 0) / 100).toLocaleString()}
+                            </span>
+                          </span>
+                          <span className="text-slate-500">
+                            Status: <span className="font-medium capitalize">
+                              {claim.status?.replace('_', ' ')}
+                            </span>
+                          </span>
+                        </div>
+                      </div>
+                      <ArrowLeft className="w-5 h-5 text-slate-400 rotate-180" />
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <Card>
+              <CardContent className="p-8 text-center">
+                <h3 className="text-lg font-semibold text-slate-900 mb-2">No Claims Found</h3>
+                <p className="text-slate-600 mb-6">
+                  You haven't submitted any claims yet. Start by uploading a policy document to get assistance with your claim.
+                </p>
+                <Button onClick={() => setLocation('/')}>
+                  Go to Dashboard
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // For specific claim ID, show loading state
   if (isLoading) {
     return (
       <div className="min-h-screen bg-bg-light">
@@ -45,6 +138,7 @@ export default function ClaimTrackerPage() {
     );
   }
 
+  // Show error if claim not found
   if (error || !data) {
     return (
       <div className="min-h-screen bg-bg-light">
@@ -56,8 +150,8 @@ export default function ClaimTrackerPage() {
               <p className="text-slate-600 mb-6">
                 The claim you're looking for doesn't exist or you don't have access to it.
               </p>
-              <Button onClick={() => setLocation('/')}>
-                Back to Dashboard
+              <Button onClick={() => setLocation('/claim-tracker')}>
+                View All Claims
               </Button>
             </CardContent>
           </Card>
