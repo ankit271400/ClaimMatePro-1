@@ -2,6 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { analyzePolicy } from "./openai";
+import { yellowSdk } from "./yellowSdk";
 import multer from "multer";
 import Tesseract from "tesseract.js";
 import { z } from "zod";
@@ -56,8 +57,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       await storage.updatePolicyText(policyId, text);
 
-      // Analyze with AI
-      const analysis = await analyzePolicy(text);
+      // Generate policy hash for blockchain verification
+      const crypto = require('crypto');
+      const policyHash = crypto.createHash('sha256').update(text).digest('hex');
+
+      // Yellow Network Integration: Verify policy on-chain
+      let blockchainVerified = false;
+      try {
+        if (!yellowSdk.isInitialized()) {
+          await yellowSdk.initialize();
+        }
+        blockchainVerified = await yellowSdk.verifyPolicyOnChain(policyHash);
+        console.log(`Policy ${policyId} blockchain verification: ${blockchainVerified ? 'SUCCESS' : 'FAILED'}`);
+      } catch (yellowError) {
+        console.warn('Yellow Network verification failed, continuing with regular analysis:', yellowError);
+      }
+
+      // Analyze with AI - Enhanced prompt to include blockchain verification status
+      const enhancedText = blockchainVerified 
+        ? `${text}\n\n[BLOCKCHAIN VERIFIED: This policy document has been cryptographically verified on Yellow Network's decentralized infrastructure]`
+        : text;
+
+      const analysis = await analyzePolicy(enhancedText);
+
+      // Enhance recommendations with blockchain features if verified
+      let enhancedRecommendations = analysis.recommendations;
+      if (blockchainVerified) {
+        enhancedRecommendations += "\n\n🔒 Blockchain Verification: Your policy has been verified on Yellow Network's decentralized infrastructure, ensuring document integrity and authenticity. This provides additional security for your insurance claims and policy management.";
+      }
 
       await storage.createAnalysis({
         policyId,
@@ -65,10 +92,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
         riskLevel: analysis.riskLevel,
         summary: analysis.summary,
         flaggedClauses: analysis.flaggedClauses,
-        recommendations: analysis.recommendations,
+        recommendations: enhancedRecommendations,
       });
 
       await storage.updatePolicyAnalysisStatus(policyId, "completed");
+      
+      // Store document hash securely using Yellow Network
+      if (blockchainVerified) {
+        try {
+          await yellowSdk.storeSecureDocument(policyHash, {
+            policyId,
+            fileName: `policy_${policyId}`,
+            timestamp: Date.now()
+          });
+        } catch (storageError) {
+          console.warn('Yellow Network storage failed:', storageError);
+        }
+      }
+
     } catch (error) {
       console.error("Error processing policy:", error);
       await storage.updatePolicyAnalysisStatus(policyId, "failed");
