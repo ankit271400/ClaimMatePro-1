@@ -151,7 +151,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Create claim
+  // Create claim with Yellow Network integration
   app.post('/api/claims', async (req: any, res) => {
     try {
       const userId = 'anonymous-user';
@@ -160,13 +160,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const claim = await storage.createClaim({ ...claimData, claimNumber });
 
-      // Create default checklist items
+      // Yellow Network Integration: Submit secure claim
+      let yellowClaimId = null;
+      let blockchainSecured = false;
+      try {
+        if (!yellowSdk.isInitialized()) {
+          await yellowSdk.initialize();
+        }
+        
+        // Submit claim to Yellow Network's secure channels
+        yellowClaimId = await yellowSdk.submitSecureClaim({
+          claimId: claim.id,
+          claimNumber: claim.claimNumber,
+          amount: claim.amount?.toString() || '0',
+          description: claim.description,
+          policyId: claim.policyId,
+          timestamp: Date.now()
+        });
+        
+        blockchainSecured = true;
+        console.log(`Claim ${claim.id} secured on Yellow Network: ${yellowClaimId}`);
+      } catch (yellowError) {
+        console.warn('Yellow Network claim submission failed, continuing with regular processing:', yellowError);
+      }
+
+      // Create enhanced checklist items with blockchain features
       const defaultItems = [
-        { title: "Gather Medical Records", description: "Collect all relevant medical documentation from your healthcare providers.", order: 1 },
-        { title: "Complete Claim Form", description: "Fill out the official claim form with accurate information about your incident.", order: 2 },
-        { title: "Submit Supporting Evidence", description: "Include photos, receipts, or other documentation that supports your claim.", order: 3 },
-        { title: "Review Policy Coverage", description: "Verify that your claim falls within your policy coverage limits.", order: 4 },
-        { title: "Submit Claim", description: "Submit your completed claim with all required documentation.", order: 5 },
+        { 
+          title: "Gather Medical Records", 
+          description: "Collect all relevant medical documentation from your healthcare providers.", 
+          order: 1 
+        },
+        { 
+          title: "Complete Claim Form", 
+          description: "Fill out the official claim form with accurate information about your incident.", 
+          order: 2 
+        },
+        { 
+          title: "Submit Supporting Evidence", 
+          description: "Include photos, receipts, or other documentation that supports your claim.", 
+          order: 3 
+        },
+        { 
+          title: "Review Policy Coverage", 
+          description: "Verify that your claim falls within your policy coverage limits.", 
+          order: 4 
+        },
+        { 
+          title: blockchainSecured ? "Secure Blockchain Submission" : "Submit Claim", 
+          description: blockchainSecured 
+            ? "Your claim is secured on Yellow Network's decentralized infrastructure for enhanced transparency and faster processing." 
+            : "Submit your completed claim with all required documentation.", 
+          order: 5 
+        },
       ];
 
       for (const item of defaultItems) {
@@ -176,15 +222,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Create initial status update
+      // Create enhanced initial status update
+      const initialDescription = blockchainSecured
+        ? `Your claim has been successfully submitted and secured on Yellow Network's decentralized infrastructure. Claim ID: ${yellowClaimId || 'pending'}`
+        : "Your claim has been successfully submitted and assigned a claim number.";
+
       await storage.createClaimUpdate({
         claimId: claim.id,
-        title: "Claim Submitted",
-        description: "Your claim has been successfully submitted and assigned a claim number.",
+        title: blockchainSecured ? "Claim Secured on Blockchain" : "Claim Submitted",
+        description: initialDescription,
         updateType: "status_change",
       });
 
-      res.json(claim);
+      // Add blockchain security notification if successful
+      if (blockchainSecured) {
+        await storage.createClaimUpdate({
+          claimId: claim.id,
+          title: "Blockchain Security Enabled",
+          description: "🔒 Your claim is now protected by Yellow Network's state channels, ensuring secure processing and transparent tracking throughout the claim lifecycle.",
+          updateType: "general_update",
+        });
+      }
+
+      res.json({ 
+        ...claim, 
+        yellowClaimId, 
+        blockchainSecured,
+        securityFeatures: blockchainSecured ? [
+          "Decentralized verification",
+          "Tamper-proof tracking", 
+          "Instant settlement capabilities",
+          "Cross-chain payment support"
+        ] : []
+      });
     } catch (error) {
       console.error("Error creating claim:", error);
       res.status(500).json({ message: "Failed to create claim" });
